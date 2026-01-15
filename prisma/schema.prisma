@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  PARENT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(PARENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  teacherProfile TeacherProfile?
+  parentProfile  ParentProfile?
+}
+
+model TeacherProfile {
+  id      String @id @default(cuid())
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id])
+  
+  classes Class[]
+}
+
+model ParentProfile {
+  id       String    @id @default(cuid())
+  userId   String    @unique
+  user     User      @relation(fields: [userId], references: [id])
+  
+  students Student[]
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  birthDate DateTime
+  
+  parentId  String
+  parent    ParentProfile @relation(fields: [parentId], references: [id])
+  
+  enrollments ClassEnrollment[]
+  grades      Grade[]
+}
+
+model Class {
+  id        String   @id @default(cuid())
+  name      String
+  teacherId String
+  teacher   TeacherProfile @relation(fields: [teacherId], references: [id])
+  
+  location  String?
+  schedule  String?
+
+  students  ClassEnrollment[]
+  grades    Grade[]
+}
+
+model ClassEnrollment {
+  id        String @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id])
+
+  @@unique([studentId, classId])
+}
+
+model Grade {
+  id        String   @id @default(cuid())
+  value     Float
+  subject   String? 
+  description String?
+  date      DateTime @default(now())
+  
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id])
+}
