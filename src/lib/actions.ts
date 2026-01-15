@@ -8,16 +8,19 @@ export async function authenticate(
     formData: FormData,
 ) {
     try {
+        console.log("Acción authenticate iniciada para:", formData.get('email'));
         await signIn('credentials', formData);
     } catch (error) {
         if (error instanceof AuthError) {
+            console.log("Error de Auth detectado:", error.type);
             switch (error.type) {
                 case 'CredentialsSignin':
-                    return 'Invalid credentials.';
+                    return 'Credenciales inválidas.';
                 default:
-                    return 'Something went wrong.';
+                    return 'Algo salió mal. Por favor intenta de nuevo.';
             }
         }
+        // IMPORTANTE: Los errores de redirección deben lanzarse para que Next.js los maneje
         throw error;
     }
 }

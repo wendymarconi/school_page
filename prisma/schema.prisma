@@ -4,20 +4,16 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  TEACHER
-  PARENT
-}
-
+// Role constants: ADMIN, TEACHER, PARENT
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
   name      String?
-  role      Role     @default(PARENT)
+  role      String   @default("PARENT")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
