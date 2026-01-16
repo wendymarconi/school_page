@@ -3,6 +3,7 @@
 import { useActionState } from 'react';
 import { authenticate } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import {
     Card,
     CardContent,
@@ -35,8 +36,8 @@ export default function LoginPage() {
                 </Link>
 
                 <div className="flex justify-center mb-8">
-                    <div className="rounded-2xl bg-white p-3 shadow-lg border border-slate-100 italic">
-                        <GraduationCap className="h-10 w-10 text-primary" />
+                    <div className="rounded-3xl bg-white p-2 shadow-2xl border border-slate-100 italic">
+                        <Image src="/logo.png" alt="Logo COEM" width={80} height={80} className="object-contain" />
                     </div>
                 </div>
 

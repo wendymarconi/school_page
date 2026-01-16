@@ -1,5 +1,6 @@
 import { signOut } from "@/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
     Users,
@@ -18,7 +19,7 @@ export default function ParentLayout({
             <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:w-64">
                 <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                     <Link href="/dashboard/parent" className="flex items-center gap-2 font-semibold">
-                        <GraduationCap className="h-6 w-6" />
+                        <Image src="/logo.png" alt="Logo COEM" width={32} height={32} className="object-contain" />
                         <span className="hidden md:inline text-primary">COEM - Familias</span>
                     </Link>
                 </div>
