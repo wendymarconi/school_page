@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, GraduationCap, Calendar, TrendingUp } from "lucide-react";
+import { ArrowLeft, BookOpen, GraduationCap, Calendar, TrendingUp, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -60,7 +60,13 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
                         <p className="text-lg text-slate-500 font-medium italic">Expediente Académico - COEM</p>
                     </div>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
+                    <a href={`/api/reports/student/${student.id}`} download>
+                        <Button className="rounded-2xl h-12 px-8 font-bold bg-destructive hover:bg-red-700 text-white shadow-lg shadow-destructive/20 transition-all flex gap-2">
+                            <FileText className="h-5 w-5" />
+                            Descargar Boletín
+                        </Button>
+                    </a>
                     <div className="glass px-6 py-4 rounded-2xl border-primary/10">
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Promedio General</p>
                         <div className="flex items-center gap-2">
@@ -117,7 +123,7 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
                                                         </p>
                                                     </div>
                                                     <div className={`px-4 py-2 rounded-xl text-lg font-black ${grade.value >= 7 ? 'bg-emerald-50 text-emerald-600' :
-                                                            grade.value >= 6 ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+                                                        grade.value >= 6 ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
                                                         }`}>
                                                         {grade.value.toFixed(1)}
                                                     </div>
