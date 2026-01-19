@@ -6,6 +6,19 @@ const prisma = new PrismaClient()
 async function main() {
     const hashedPassword = await bcrypt.hash('Escuela@2026', 10)
 
+    // 0. Crear Administrador
+    const adminUser = await prisma.user.upsert({
+        where: { email: 'admin@school.com' },
+        update: {},
+        create: {
+            email: 'admin@school.com',
+            password: hashedPassword,
+            name: 'Administrador COEM',
+            role: 'ADMIN',
+        }
+    })
+    console.log('Admin creado:', adminUser.email)
+
     // 1. Crear o Actualizar Profesor
     const teacherUser = await prisma.user.upsert({
         where: { email: 'teacher@school.com' },

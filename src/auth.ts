@@ -29,24 +29,27 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data
-                    console.log("Intentando autenticar:", email)
-                    const user = await getUser(email)
+                    console.log("LOGIN_DEBUG: Intentando autenticar:", email);
+                    const user = await getUser(email);
                     if (!user) {
-                        console.log("Usuario no encontrado:", email)
-                        return null
+                        console.log("LOGIN_DEBUG: Usuario no encontrado en DB:", email);
+                        return null;
                     }
 
-                    const passwordsMatch = await bcrypt.compare(password, user.password)
+                    console.log("LOGIN_DEBUG: Usuario encontrado, comparando contraseñas...");
+                    const passwordsMatch = await bcrypt.compare(password, user.password);
+
                     if (passwordsMatch) {
-                        console.log("Autenticación exitosa para:", email)
-                        return user
+                        console.log("LOGIN_DEBUG: Autenticación exitosa para:", email);
+                        return user;
                     } else {
-                        console.log("Contraseña incorrecta para:", email)
+                        console.log("LOGIN_DEBUG: Contraseña incorrecta para:", email);
                     }
+                } else {
+                    console.log("LOGIN_DEBUG: Error de validación Zod:", parsedCredentials.error.format());
                 }
 
-                console.log("Error de validación de credenciales")
-                return null
+                return null;
             },
         }),
     ],
