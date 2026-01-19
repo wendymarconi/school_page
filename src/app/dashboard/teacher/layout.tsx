@@ -17,44 +17,48 @@ export default function TeacherLayout({
 }) {
     return (
         <div className="flex min-h-screen w-full flex-col bg-muted/40 md:flex-row">
-            <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:w-64">
-                <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                    <Link href="/dashboard/teacher" className="flex items-center gap-2 font-semibold">
-                        <Image src="/logo.png" alt="Logo COEM" width={32} height={32} className="object-contain" />
-                        <span className="hidden md:inline text-primary">COEM - Profesores</span>
+            <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-white/80 backdrop-blur-xl sm:flex md:w-64 transition-all duration-300">
+                <div className="flex h-20 items-center px-6 border-b border-slate-100">
+                    <Link href="/dashboard/teacher" className="flex items-center gap-3 font-bold group">
+                        <div className="relative w-8 h-8 transition-transform group-hover:scale-110">
+                            <Image src="/logo.png" alt="Logo COEM" fill className="object-contain" />
+                        </div>
+                        <span className="hidden md:inline text-primary tracking-tighter text-lg">COEM <span className="text-slate-400 font-medium">Portal</span></span>
                     </Link>
                 </div>
-                <nav className="flex flex-col gap-2 p-2">
-                    <Link
-                        href="/dashboard/teacher"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
-                    >
-                        <LayoutDashboard className="h-5 w-5" />
-                        <span className="hidden md:inline">Dashboard</span>
-                    </Link>
-                    <Link
-                        href="/dashboard/teacher/classes"
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
-                    >
-                        <Users className="h-5 w-5" />
-                        <span className="hidden md:inline">My Classes</span>
-                    </Link>
+                <nav className="flex flex-col gap-2 p-4">
+                    {[
+                        { href: "/dashboard/teacher", icon: LayoutDashboard, label: "Dashboard" },
+                        { href: "/dashboard/teacher/classes", icon: Users, label: "Mis Clases" },
+                    ].map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 font-semibold transition-all hover:text-primary hover:bg-primary/5 active:scale-95 group"
+                        >
+                            <item.icon className="h-5 w-5 group-hover:rotate-6 transition-transform" />
+                            <span className="hidden md:inline">{item.label}</span>
+                        </Link>
+                    ))}
                 </nav>
-                <div className="mt-auto p-4 border-t">
+                <div className="mt-auto p-4 border-t border-slate-100">
                     <form action={async () => {
                         "use server"
                         await signOut({ redirectTo: "/login" })
                     }}>
-                        <Button variant="ghost" className="w-full justify-start gap-2 px-2 md:px-4">
+                        <Button variant="ghost" className="w-full justify-start gap-3 px-4 py-6 rounded-xl text-slate-500 hover:text-destructive hover:bg-destructive/5 font-semibold transition-all">
                             <LogOut className="h-5 w-5" />
-                            <span className="hidden md:inline">Sign Out</span>
+                            <span className="hidden md:inline">Cerrar Sesión</span>
                         </Button>
                     </form>
                 </div>
             </aside>
 
-            <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 md:pl-64">
-                <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+            <div className="flex flex-col sm:gap-4 sm:pl-16 md:pl-64">
+                <header className="sticky top-0 z-10 flex h-20 items-center gap-4 border-b bg-white/50 backdrop-blur-lg px-6 sm:bg-transparent sm:border-none">
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Panel Administrativo</h2>
+                </header>
+                <main className="grid flex-1 items-start gap-8 p-6 md:p-8">
                     {children}
                 </main>
             </div>

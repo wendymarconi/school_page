@@ -19,38 +19,38 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* 1. Header Sticky */}
-      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100 shadow-sm">
+      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm transition-all duration-300">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link className="flex items-center gap-3 group" href="#">
-            <div className="relative w-12 h-12 transition-transform group-hover:scale-110">
+            <div className="relative w-12 h-12 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
               <Image src="/logo.png" alt="Logo COEM" fill className="object-contain" priority />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-primary leading-tight">COEM</span>
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-medium hidden sm:block">Luz y Esperanza</span>
+              <span className="text-xl font-bold text-primary leading-tight tracking-tight">COEM</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold hidden sm:block">Luz y Esperanza</span>
             </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">
-            <Link className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hover:underline decoration-2 underline-offset-8" href="#institucional">
-              Institucional
-            </Link>
-            <Link className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hover:underline decoration-2 underline-offset-8" href="#niveles">
-              Niveles
-            </Link>
-            <Link className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors hover:underline decoration-2 underline-offset-8" href="#contacto">
-              Contacto
-            </Link>
+            {['Institucional', 'Niveles', 'Contacto'].map((item) => (
+              <Link
+                key={item}
+                className="text-sm font-semibold text-slate-600 hover:text-primary transition-all hover:underline decoration-primary decoration-2 underline-offset-8"
+                href={`#${item.toLowerCase()}`}
+              >
+                {item}
+              </Link>
+            ))}
           </nav>
 
           <div className="flex items-center gap-4">
             <Link href="/login">
-              <Button variant="outline" className="hidden sm:flex rounded-full border-primary text-primary hover:bg-primary hover:text-white font-bold px-6">
+              <Button variant="outline" className="hidden sm:flex rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold px-6 btn-premium">
                 Ingresar
               </Button>
             </Link>
             <Link href="/login">
-              <Button className="rounded-full font-bold px-6 shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+              <Button className="rounded-full font-bold px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 btn-premium">
                 Plataforma
               </Button>
             </Link>
@@ -60,40 +60,41 @@ export default function LandingPage() {
 
       <main className="flex-1 pt-20">
         {/* 2. Hero Section */}
-        <section className="relative w-full min-h-[85vh] flex items-center overflow-hidden bg-slate-900">
+        <section className="relative w-full min-h-[90vh] flex items-center overflow-hidden bg-slate-950">
           <div className="absolute inset-0 z-0">
             <Image
               src="/hero.png"
               alt="Estudiantes COEM"
               fill
-              className="object-cover opacity-60 brightness-75 scale-105"
+              className="object-cover opacity-50 brightness-[0.6] scale-105 animate-pulse-slow"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-950/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_100%)]"></div>
           </div>
 
           <div className="container relative z-10 px-4 mx-auto">
-            <div className="max-w-3xl space-y-6 animate-in fade-in slide-in-from-left-8 duration-700">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full text-white text-sm font-medium">
+            <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+              <div className="inline-flex items-center gap-2 bg-primary/10 backdrop-blur-md border border-primary/20 px-5 py-2 rounded-full text-blue-300 text-sm font-bold tracking-wide">
                 <Sparkles className="h-4 w-4 text-yellow-400" />
-                Matrículas Abiertas 2026
+                ADMISIONES ABIERTAS 2026
               </div>
-              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
-                Formamos con <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                  Luz y Esperanza
+              <h1 className="text-6xl md:text-8xl font-black text-white leading-[0.95] tracking-tighter">
+                Educación con <br />
+                <span className="text-gradient drop-shadow-sm">
+                  Propósito Real
                 </span>
               </h1>
-              <p className="text-xl text-slate-200 font-light leading-relaxed max-w-2xl">
-                En el <strong>Colegio Pedagógico Emmanuel</strong> brindamos una educación integral basada en valores, excelencia académica e innovación pedagógica.
+              <p className="text-xl md:text-2xl text-slate-300 font-medium leading-relaxed max-w-2xl opacity-90">
+                En el <strong className="text-white font-bold">Colegio EM</strong> formamos líderes con valores sólidos, excelencia académica e innovación constante.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button size="lg" className="rounded-full px-10 h-14 text-lg font-bold">
-                  Proceso de Admisión
+              <div className="flex flex-col sm:flex-row gap-5 pt-4">
+                <Button size="lg" className="rounded-full px-10 h-16 text-lg font-bold btn-premium shadow-2xl shadow-primary/30">
+                  Iniciar Admisión
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button variant="outline" size="lg" className="rounded-full px-10 h-14 text-lg font-bold border-white/30 text-white hover:bg-white/10 backdrop-blur-sm">
-                  Conócenos
+                <Button variant="outline" size="lg" className="rounded-full px-10 h-16 text-lg font-bold border-white/20 text-white hover:bg-white/10 glass transition-all">
+                  Explorar Niveles
                 </Button>
               </div>
             </div>
@@ -101,40 +102,56 @@ export default function LandingPage() {
         </section>
 
         {/* 3. Quiénes Somos Section */}
-        <section id="institucional" className="py-24 bg-white">
+        <section id="institucional" className="py-24 bg-white relative overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="grid lg:grid-cols-2 gap-20 items-center">
               <div className="relative group">
-                <div className="absolute -inset-4 bg-primary/10 rounded-2xl scale-95 group-hover:scale-100 transition-transform duration-500"></div>
-                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl">
-                  <Image src="/hero.png" alt="Institución COEM" fill className="object-contain" />
+                <div className="absolute -inset-6 bg-primary/5 rounded-[2.5rem] scale-95 group-hover:scale-100 transition-all duration-700"></div>
+                <div className="relative rounded-[2rem] overflow-hidden aspect-[4/3] shadow-2xl border border-slate-100">
+                  <Image src="/hero.png" alt="Institución COEM" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
                 </div>
-              </div>
-              <div className="space-y-8">
-                <div className="space-y-2">
-                  <span className="text-primary font-bold uppercase tracking-widest text-sm">Nuestro Colegio</span>
-                  <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Excelencia Pedagógica en Floridablanca</h2>
-                </div>
-                <p className="text-lg text-slate-600 leading-relaxed">
-                  El Colegio Pedagógico Emmanuel (COEM) se destaca por su compromiso con el desarrollo integral de cada niño. En el barrio La Cumbre, somos referentes en calidez humana y calidad educativa.
-                </p>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-blue-50">
-                      <School className="h-6 w-6 text-primary" />
+                <div className="absolute -bottom-6 -right-6 glass p-6 rounded-2xl shadow-xl hidden md:block animate-in zoom-in duration-500 delay-300">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Users className="h-6 w-6" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900">Infraestructura</h4>
-                      <p className="text-sm text-slate-500">Espacios modernos y seguros.</p>
+                      <p className="text-2xl font-black text-slate-900">20+</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Años de Excelencia</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-red-50">
-                      <Users className="h-6 w-6 text-destructive" />
+                </div>
+              </div>
+              <div className="space-y-10">
+                <div className="space-y-4">
+                  <div className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-primary text-sm font-bold tracking-wide uppercase">
+                    Nuestro Legado
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight">
+                    Liderazgo Pedagógico en <span className="text-primary italic">Floridablanca</span>
+                  </h2>
+                </div>
+                <p className="text-xl text-slate-600 leading-relaxed font-medium opacity-80">
+                  El <strong className="text-slate-900">Colegio Pedagógico Emmanuel (COEM)</strong> es más que una escuela; es un ecosistema de crecimiento donde cada niño es protagonista de su propia historia de éxito.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-8">
+                  <div className="flex items-start gap-5 group">
+                    <div className="p-4 rounded-2xl bg-blue-50 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                      <School className="h-7 w-7" />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-slate-900">Docentes</h4>
-                      <p className="text-sm text-slate-500">Altamente calificados.</p>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-900 text-lg">Entornos SEGUROS</h4>
+                      <p className="text-sm text-slate-500 font-medium">Infraestructura diseñada para la exploración y el aprendizaje.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-5 group">
+                    <div className="p-4 rounded-2xl bg-red-50 text-destructive group-hover:bg-destructive group-hover:text-white transition-all duration-300">
+                      <Users className="h-7 w-7" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-900 text-lg">Mentores ÉLITE</h4>
+                      <p className="text-sm text-slate-500 font-medium">Docentes apasionados comprometidos con el futuro.</p>
                     </div>
                   </div>
                 </div>
@@ -153,20 +170,20 @@ export default function LandingPage() {
 
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { title: "Preescolar", icon: Sparkles, color: "bg-amber-100 text-amber-600", desc: "Estimulación temprana y desarrollo emocional en un ambiente lúdico." },
-                { title: "Primaria", icon: BookOpen, color: "bg-blue-100 text-blue-600", desc: "Bases sólidas en lectoescritura, matemáticas y valores institucionales." },
-                { title: "Bachillerato", icon: School, color: "bg-red-100 text-red-600", desc: "Formación crítica y preparatoria para la excelencia profesional." }
+                { title: "Preescolar", icon: Sparkles, color: "text-amber-500", bg: "bg-amber-500/10", desc: "Estimulación temprana y desarrollo emocional en un ambiente lúdico." },
+                { title: "Primaria", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10", desc: "Bases sólidas en lectoescritura, matemáticas y valores institucionales." },
+                { title: "Bachillerato", icon: School, color: "text-red-500", bg: "bg-red-500/10", desc: "Formación crítica y preparatoria para la excelencia profesional." }
               ].map((item, idx) => (
-                <Card key={idx} className="group border-none shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] hover:shadow-2xl transition-all duration-300 rounded-3xl overflow-hidden bg-white">
-                  <CardContent className="p-8 flex flex-col items-center text-center space-y-6">
-                    <div className={`p-5 rounded-2xl ${item.color} group-hover:scale-110 transition-transform`}>
+                <Card key={idx} className="group glass border-none hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 rounded-[2rem] overflow-hidden">
+                  <CardContent className="p-10 flex flex-col items-center text-center space-y-6">
+                    <div className={`p-6 rounded-2xl ${item.bg} ${item.color} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500`}>
                       <item.icon className="h-10 w-10" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900">{item.title}</h3>
-                    <p className="text-slate-500 leading-relaxed min-h-[80px]">
+                    <h3 className="text-2xl font-bold text-slate-900 group-hover:text-primary transition-colors">{item.title}</h3>
+                    <p className="text-slate-600 leading-relaxed min-h-[80px]">
                       {item.desc}
                     </p>
-                    <Button variant="outline" className="rounded-full px-8 hover:bg-primary hover:text-white transition-colors">
+                    <Button variant="outline" className="rounded-full px-8 border-primary/20 hover:bg-primary hover:text-white transition-all btn-premium">
                       Ver detalle
                     </Button>
                   </CardContent>

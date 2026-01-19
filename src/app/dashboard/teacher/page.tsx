@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { redirect } from "next/navigation";
+import { GraduationCap, ChevronRight } from "lucide-react";
 
 export default async function TeacherDashboard() {
     const session = await auth();
@@ -44,25 +45,62 @@ export default async function TeacherDashboard() {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
-                    <p className="text-muted-foreground">Bienvenido de nuevo, {session.user.name}</p>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+                        ¡Hola, <span className="text-primary">{session.user.name?.split(' ')[0]}</span>! 👋
+                    </h1>
+                    <p className="text-lg text-slate-500 font-medium">
+                        Hoy es un gran día para inspirar a tus estudiantes.
+                    </p>
+                </div>
+                <div className="flex gap-4">
+                    <div className="glass px-6 py-3 rounded-2xl border-primary/10">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Estudiantes</p>
+                        <p className="text-2xl font-black text-primary">
+                            {teacherProfile.classes.reduce((acc: number, clsValue: any) => acc + clsValue._count.students, 0)}
+                        </p>
+                    </div>
+                    <div className="glass px-6 py-3 rounded-2xl border-primary/10">
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mis Clases</p>
+                        <p className="text-2xl font-black text-primary">{teacherProfile.classes.length}</p>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {teacherProfile.classes.map((cls: any) => (
                     <Link key={cls.id} href={`/dashboard/teacher/classes/${cls.id}`}>
-                        <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
-                            <CardHeader>
-                                <CardTitle>{cls.name}</CardTitle>
-                                <CardDescription>{cls.location || 'Sin curso'}</CardDescription>
+                        <Card className="group glass border-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden rounded-[2rem]">
+                            <CardHeader className="p-8 pb-4">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="p-3 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                                        <GraduationCap className="h-6 w-6" />
+                                    </div>
+                                    <span className="px-3 py-1 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                        {cls.location || 'Grado'}
+                                    </span>
+                                </div>
+                                <CardTitle className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors">
+                                    {cls.name}
+                                </CardTitle>
+                                <CardDescription className="text-slate-500 font-medium pt-1">
+                                    Horario: {cls.schedule || 'Por definir'}
+                                </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-2xl font-bold">{cls._count.students} Estudiantes</p>
-                                <p className="text-sm text-muted-foreground">{cls.schedule || 'Sin horario'}</p>
+                            <CardContent className="p-8 pt-0">
+                                <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+                                    <div>
+                                        <p className="text-3xl font-black text-slate-900 leading-none">
+                                            {cls._count.students}
+                                        </p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Alumnos</p>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-primary group-hover:text-white transition-all">
+                                        <ChevronRight className="h-5 w-5" />
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </Link>

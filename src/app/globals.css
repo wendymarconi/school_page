@@ -13,8 +13,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 215 80% 40%;
-    /* Azul COEM */
+    --primary: 221 83% 45%;
+    /* Azul COEM Refinado */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -23,18 +23,18 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 215 80% 95%;
-    --accent-foreground: 222 47.4% 11.2%;
+    --accent: 221 83% 96%;
+    --accent-foreground: 221 83% 30%;
 
-    --destructive: 0 80% 50%;
-    /* Rojo COEM */
+    --destructive: 0 84% 60%;
+    /* Rojo COEM Refinado */
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 215 80% 40%;
+    --ring: 221 83% 45%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -47,7 +47,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 221 83% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -64,7 +64,25 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --ring: 221 83% 60%;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/30 shadow-[0_8px_32px_0_rgba(31, 38, 135, 0.07)];
+  }
+
+  .glass-dark {
+    @apply bg-slate-950/40 backdrop-blur-md border border-white/10 shadow-xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-400;
+  }
+
+  .btn-premium {
+    @apply relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 active:scale-95;
   }
 }
 
@@ -79,9 +97,6 @@
   }
 }
 
-.glass {
-  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
-}
 
 .bg-grid-slate-100 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(15 23 42 / 0.04)'%3E%3Cpath d='M0 .5H31.5V32'/%3E%3C/svg%3E");
