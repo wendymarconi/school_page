@@ -93,7 +93,7 @@ export default function LandingPage() {
                   Iniciar Admisión
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button variant="outline" size="lg" className="rounded-full px-10 h-16 text-lg font-bold border-white/20 text-white hover:bg-white/10 glass transition-all">
+                <Button variant="outline" size="lg" className="rounded-full px-10 h-16 text-lg font-bold border-white/20 text-slate-900 hover:bg-white/10 glass transition-all">
                   Explorar Niveles
                 </Button>
               </div>
@@ -262,7 +262,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2 space-y-6">
               <div className="flex items-center gap-3">
-                <Image src="/logo.png" alt="Logo COEM" width={48} height={48} className="brightness-0 invert" />
+                <Image src="/logo.png" alt="Logo COEM" width={48} height={48} className="object-contain" />
                 <span className="text-2xl font-bold text-white tracking-tighter">COEM</span>
               </div>
               <p className="text-slate-400 max-w-sm leading-relaxed">

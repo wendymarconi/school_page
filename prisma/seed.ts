@@ -9,45 +9,62 @@ async function main() {
     // 1. Crear o Actualizar Profesor
     const teacherUser = await prisma.user.upsert({
         where: { email: 'teacher@school.com' },
-        update: { password: hashedPassword },
+        update: {
+            name: 'Prof. Rodriguez',
+            password: hashedPassword,
+        },
         create: {
             email: 'teacher@school.com',
             password: hashedPassword,
-            name: 'Mr. Smith',
+            name: 'Prof. Rodriguez',
             role: 'TEACHER',
             teacherProfile: {
                 create: {
                     classes: {
                         create: {
-                            name: 'Mathematics 101',
+                            name: 'Matemáticas Avanzadas',
                             location: 'Curso 304',
-                            schedule: 'Lun/Mie 10:00 AM'
+                            schedule: 'Lun / Mié 10:00 AM'
                         }
                     }
                 }
             }
         },
         include: { teacherProfile: { include: { classes: true } } }
-    })
+    });
+
+    // Asegurar que las clases tengan nombres en español si ya existen
+    if (teacherUser.teacherProfile) {
+        await prisma.class.updateMany({
+            where: { teacherId: teacherUser.teacherProfile.id },
+            data: {
+                name: 'Matemáticas Avanzadas',
+                location: 'Curso 304',
+                schedule: 'Lun / Mié 10:00 AM'
+            }
+        });
+    }
 
     console.log('Profesor actualizado:', teacherUser.email)
 
     // 2. Crear o Actualizar Estudiantes y Padres
     if (teacherUser.teacherProfile?.classes[0]) {
         const classId = teacherUser.teacherProfile.classes[0].id
-        const studentNames = ['Alice', 'Bob', 'Charlie']
+        const studentNames = ['Alejandra', 'Bernardo', 'Camilo']
 
         for (const name of studentNames) {
             const parentEmail = `parent_${name.toLowerCase()}@test.com`
 
-            // Primero aseguramos que el usuario padre existe con la password correcta
             const parentUser = await prisma.user.upsert({
                 where: { email: parentEmail },
-                update: { password: hashedPassword },
+                update: {
+                    name: `Acudiente de ${name}`,
+                    password: hashedPassword
+                },
                 create: {
                     email: parentEmail,
                     password: hashedPassword,
-                    name: `Parent of ${name}`,
+                    name: `Acudiente de ${name}`,
                     role: 'PARENT',
                     parentProfile: {
                         create: {}
@@ -56,7 +73,7 @@ async function main() {
                 include: { parentProfile: true }
             })
 
-            // Luego aseguramos que el estudiante existe vinculado a ese padre
+            // Vincular estudiante
             let student = await prisma.student.findFirst({
                 where: { name, parent: { userId: parentUser.id } }
             })
@@ -65,12 +82,18 @@ async function main() {
                 student = await prisma.student.create({
                     data: {
                         name,
-                        birthDate: new Date('2010-01-01'),
+                        birthDate: new Date('2012-05-15'),
                         parentId: parentUser.parentProfile!.id,
                         enrollments: {
                             create: { classId }
                         }
                     }
+                })
+            } else {
+                // Actualizar nombre si ya existe
+                await prisma.student.update({
+                    where: { id: student.id },
+                    data: { name }
                 })
             }
 
