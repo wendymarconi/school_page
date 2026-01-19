@@ -62,11 +62,33 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
 
             if (isOnDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirigir a login
+                if (!isLoggedIn) return false;
+
+                const role = auth.user.role;
+
+                // Redirigir la raíz /dashboard al sub-dashboard correspondiente
+                if (nextUrl.pathname === '/dashboard' || nextUrl.pathname === '/dashboard/') {
+                    return Response.redirect(new URL('/dashboard/' + role.toLowerCase(), nextUrl));
+                }
+
+                // Restricciones de sub-dashboard por rol
+                if (nextUrl.pathname.startsWith('/dashboard/admin') && role !== 'ADMIN') {
+                    return Response.redirect(new URL('/dashboard/' + role.toLowerCase(), nextUrl));
+                }
+                if (nextUrl.pathname.startsWith('/dashboard/teacher') && role !== 'TEACHER') {
+                    return Response.redirect(new URL('/dashboard/' + role.toLowerCase(), nextUrl));
+                }
+                if (nextUrl.pathname.startsWith('/dashboard/parent') && role !== 'PARENT') {
+                    return Response.redirect(new URL('/dashboard/' + role.toLowerCase(), nextUrl));
+                }
+
+                return true;
             } else if (isLoggedIn && nextUrl.pathname === '/login') {
                 // Si está logueado y va a login, mandarlo a su dashboard según su rol
                 const role = auth.user.role;
+                if (role === 'ADMIN') {
+                    return Response.redirect(new URL('/dashboard/admin', nextUrl));
+                }
                 if (role === 'TEACHER') {
                     return Response.redirect(new URL('/dashboard/teacher', nextUrl));
                 }

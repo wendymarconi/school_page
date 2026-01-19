@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function AdminDashboardPage() {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") {
-        // En un entorno real, redirigiríamos, pero para desarrollo permitiremos el acceso si no hay sesión estricta
-        // o si es un usuario que queremos que sea admin.
-        // redirect("/login");
+        redirect("/dashboard/parent"); // Fallback a parent dashboard si no es admin (el middleware ya debería manejar esto)
     }
 
     return (
