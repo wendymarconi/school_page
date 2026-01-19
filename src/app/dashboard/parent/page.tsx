@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { User as UserIcon } from "lucide-react";
+import { User as UserIcon, ChevronRight, BookOpen } from "lucide-react";
 
 export default async function ParentDashboard() {
     const session = await auth();
@@ -45,38 +45,67 @@ export default async function ParentDashboard() {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Mis Hijos</h1>
-                    <p className="text-muted-foreground">Selecciona un hijo para ver su progreso académico.</p>
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight">
+                        Bienvenido, <span className="text-primary">{session.user.name?.split(' ')[0]}</span> 👋
+                    </h1>
+                    <p className="text-lg text-slate-500 font-medium">
+                        Monitorea el progreso académico de tus hijos aquí.
+                    </p>
+                </div>
+                <div className="glass px-6 py-4 rounded-2xl border-primary/10">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hijos Registrados</p>
+                    <p className="text-2xl font-black text-primary">{parentProfile.students.length}</p>
                 </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {parentProfile.students.map((student: any) => (
                     <Link key={student.id} href={`/dashboard/parent/children/${student.id}`}>
-                        <Card className="hover:bg-muted/50 transition-colors cursor-pointer h-full">
-                            <CardHeader className="flex flex-row items-center gap-4">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                                    <UserIcon className="h-6 w-6 text-primary" />
+                        <Card className="group glass border-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden rounded-[2rem]">
+                            <CardHeader className="p-8 pb-4">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="p-3 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                                        <UserIcon className="h-6 w-6" />
+                                    </div>
+                                    <span className="px-3 py-1 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                        Estado: Activo
+                                    </span>
                                 </div>
-                                <div>
-                                    <CardTitle>{student.name}</CardTitle>
-                                    <CardDescription>ID: {student.id.slice(0, 8)}</CardDescription>
-                                </div>
+                                <CardTitle className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors">
+                                    {student.name}
+                                </CardTitle>
+                                <CardDescription className="text-slate-500 font-medium pt-1">
+                                    Hijo/a vinculado
+                                </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <div className="text-sm text-muted-foreground">
-                                    <p>Clases Inscritas: {student.enrollments.length}</p>
+                            <CardContent className="p-8 pt-0">
+                                <div className="flex items-center justify-between border-t border-slate-100 pt-6">
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-2 rounded-lg bg-slate-50 text-slate-400 group-hover:text-primary transition-colors">
+                                            <BookOpen className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-900 leading-none">
+                                                {student.enrollments.length} Materias
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-primary group-hover:text-white transition-all">
+                                        <ChevronRight className="h-5 w-5" />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
                     </Link>
                 ))}
                 {parentProfile.students.length === 0 && (
-                    <div className="col-span-full text-center py-10 border rounded-lg border-dashed">
-                        <p className="text-muted-foreground">No hay hijos vinculados a tu cuenta.</p>
+                    <div className="col-span-full text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-200">
+                        <UserIcon className="h-12 w-12 text-slate-200 mx-auto mb-4" />
+                        <h3 className="text-lg font-bold text-slate-900">Sin hijos vinculados</h3>
+                        <p className="text-slate-500">No hay estudiantes registrados bajo este perfil.</p>
                     </div>
                 )}
             </div>
