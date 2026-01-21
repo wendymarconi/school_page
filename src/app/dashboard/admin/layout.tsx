@@ -30,6 +30,7 @@ export default function AdminLayout({
                 <nav className="flex flex-col gap-2 p-4">
                     {[
                         { href: "/dashboard/admin", icon: LayoutDashboard, label: "Panel Principal" },
+                        { href: "/dashboard/admin/subjects", icon: BookOpen, label: "Materias" },
                         { href: "/dashboard/admin/students", icon: Users, label: "Alumnos" },
                         { href: "/dashboard/admin/students/new", icon: UserPlus, label: "Nuevo Alumno" },
                     ].map((item) => (
