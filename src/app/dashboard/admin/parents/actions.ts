@@ -10,6 +10,8 @@ const ParentSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     email: z.string().email("Email inválido"),
     password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres").optional(),
+    phone: z.string().optional(),
+    relationship: z.string().optional(),
 });
 
 export async function createParent(formData: FormData) {
@@ -17,6 +19,8 @@ export async function createParent(formData: FormData) {
         name: formData.get("name"),
         email: formData.get("email"),
         password: formData.get("password"),
+        phone: formData.get("phone"),
+        relationship: formData.get("relationship"),
     });
 
     if (!validatedFields.success) {
@@ -26,7 +30,7 @@ export async function createParent(formData: FormData) {
         };
     }
 
-    const { name, email, password } = validatedFields.data;
+    const { name, email, password, phone, relationship } = validatedFields.data;
 
     try {
         // Verificar si el usuario ya existe
@@ -49,7 +53,10 @@ export async function createParent(formData: FormData) {
                 password: hashedPassword,
                 role: "PARENT",
                 parentProfile: {
-                    create: {}
+                    create: {
+                        phone,
+                        relationship
+                    }
                 }
             }
         });
@@ -69,6 +76,8 @@ export async function updateParent(id: string, formData: FormData) {
     const validatedFields = ParentSchema.safeParse({
         name: formData.get("name"),
         email: formData.get("email"),
+        phone: formData.get("phone"),
+        relationship: formData.get("relationship"),
     });
 
     if (!validatedFields.success) {
@@ -78,7 +87,7 @@ export async function updateParent(id: string, formData: FormData) {
         };
     }
 
-    const { name, email } = validatedFields.data;
+    const { name, email, phone, relationship } = validatedFields.data;
 
     try {
         await prisma.parentProfile.update({
@@ -89,7 +98,9 @@ export async function updateParent(id: string, formData: FormData) {
                         name,
                         email,
                     }
-                }
+                },
+                phone,
+                relationship
             }
         });
 

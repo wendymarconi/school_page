@@ -9,7 +9,9 @@ import {
     Trash2,
     UserPlus,
     ShieldCheck,
-    GraduationCap
+    GraduationCap,
+    Phone,
+    UserCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,8 +116,8 @@ export default async function ParentsPage({
                                             <div>
                                                 <h3 className="font-bold text-slate-900 group-hover:text-primary transition-colors">{parent.user.name}</h3>
                                                 <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
-                                                    <ShieldCheck className="h-3 w-3" />
-                                                    ACUDIENTE ACTIVO
+                                                    <UserCircle2 className="h-3 w-3" />
+                                                    {parent.relationship?.toUpperCase() || "ACUDIENTE"} ACTIVO
                                                 </div>
                                             </div>
                                         </div>
@@ -132,9 +134,17 @@ export default async function ParentsPage({
                                         </Dialog>
                                     </div>
                                     <div className="p-5 space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <Mail className="h-4 w-4 text-slate-400" />
-                                            <span className="text-sm text-slate-600 truncate">{parent.user.email}</span>
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-3">
+                                                <Mail className="h-4 w-4 text-slate-400" />
+                                                <span className="text-sm text-slate-600 truncate">{parent.user.email}</span>
+                                            </div>
+                                            {parent.phone && (
+                                                <div className="flex items-center gap-3">
+                                                    <Phone className="h-4 w-4 text-slate-400" />
+                                                    <span className="text-sm text-slate-600">{parent.phone}</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="pt-2">

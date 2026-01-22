@@ -86,6 +86,37 @@ export default function ParentForm({ initialData, onSuccess }: ParentFormProps) 
                         )}
                     </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-slate-700 font-semibold text-sm">Número de Contacto</Label>
+                            <Input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                placeholder="Ej: 310 123 4567"
+                                defaultValue={initialData?.phone}
+                                className="h-11 border-slate-200"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="relationship" className="text-slate-700 font-semibold text-sm">Parentesco</Label>
+                            <select
+                                id="relationship"
+                                name="relationship"
+                                defaultValue={initialData?.relationship || ""}
+                                className="flex h-11 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20"
+                            >
+                                <option value="">Seleccione...</option>
+                                <option value="Padre">Padre</option>
+                                <option value="Madre">Madre</option>
+                                <option value="Abuelo/a">Abuelo/a</option>
+                                <option value="Tío/a">Tío/a</option>
+                                <option value="Tutor Legal">Tutor Legal</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {!initialData && (
                         <div className="space-y-2">
                             <Label htmlFor="password" className="text-slate-700 font-semibold text-sm">Contraseña Temporal</Label>
