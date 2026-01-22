@@ -9,16 +9,17 @@ const StudentSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     birthDate: z.string().transform((str) => new Date(str)),
     parentIds: z.array(z.string()).min(1, "Debe seleccionar al menos un acudiente"),
-    classId: z.string().optional(),
+    classIds: z.array(z.string()).optional(),
 });
 
 export async function createStudent(formData: FormData) {
     const parentIds = formData.getAll("parentIds") as string[];
+    const rawClassIds = formData.getAll("classIds") as string[];
     const validatedFields = StudentSchema.safeParse({
         name: formData.get("name"),
         birthDate: formData.get("birthDate"),
         parentIds: parentIds,
-        classId: formData.get("classId"),
+        classIds: rawClassIds,
     });
 
     if (!validatedFields.success) {
@@ -28,7 +29,7 @@ export async function createStudent(formData: FormData) {
         };
     }
 
-    const { name, birthDate, parentIds: validatedParentIds, classId } = validatedFields.data;
+    const { name, birthDate, parentIds: validatedParentIds, classIds } = validatedFields.data;
 
     try {
         await prisma.student.create({
@@ -40,11 +41,11 @@ export async function createStudent(formData: FormData) {
                         parentId
                     }))
                 },
-                ...(classId ? {
+                ...(classIds && classIds.length > 0 ? {
                     enrollments: {
-                        create: {
-                            classId: classId
-                        }
+                        create: classIds.map(classId => ({
+                            classId
+                        }))
                     }
                 } : {})
             },
@@ -63,12 +64,13 @@ export async function createStudent(formData: FormData) {
 
 export async function updateStudent(id: string, formData: FormData) {
     const parentIds = formData.getAll("parentIds") as string[];
+    const rawClassIds = formData.getAll("classIds") as string[];
     const rawBirthDate = formData.get("birthDate") as string;
     const validatedFields = StudentSchema.safeParse({
         name: formData.get("name"),
         birthDate: rawBirthDate,
         parentIds: parentIds,
-        classId: formData.get("classId"),
+        classIds: rawClassIds,
     });
 
     if (!validatedFields.success) {
@@ -78,7 +80,7 @@ export async function updateStudent(id: string, formData: FormData) {
         };
     }
 
-    const { name, birthDate, parentIds: validatedParentIds, classId } = validatedFields.data;
+    const { name, birthDate, parentIds: validatedParentIds, classIds } = validatedFields.data;
 
     try {
         await prisma.student.update({
@@ -95,17 +97,17 @@ export async function updateStudent(id: string, formData: FormData) {
             },
         });
 
-        // Manejar inscripción a clase
-        if (classId) {
-            await prisma.classEnrollment.deleteMany({
-                where: { studentId: id }
-            });
+        // Manejar inscripción a clases
+        await prisma.classEnrollment.deleteMany({
+            where: { studentId: id }
+        });
 
-            await prisma.classEnrollment.create({
-                data: {
+        if (classIds && classIds.length > 0) {
+            await prisma.classEnrollment.createMany({
+                data: classIds.map(classId => ({
                     studentId: id,
                     classId: classId
-                }
+                }))
             });
         }
 
