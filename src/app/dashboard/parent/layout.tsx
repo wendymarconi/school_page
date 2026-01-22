@@ -9,7 +9,8 @@ import {
     GraduationCap,
     FileText,
     MessageSquare,
-    Settings
+    Settings,
+    UserCircle
 } from "lucide-react";
 
 export default function ParentLayout({
@@ -53,10 +54,13 @@ export default function ParentLayout({
 
                     <nav className="mt-10 flex flex-col gap-2 px-4">
                         <p className="px-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Configuración</p>
-                        <div className="opacity-50 cursor-not-allowed flex items-center gap-3 rounded-2xl px-4 py-3 text-slate-400 font-bold transition-all">
-                            <Settings className="h-5 w-5" />
+                        <Link
+                            href="/dashboard/profile"
+                            className="flex items-center gap-3 rounded-2xl px-4 py-3 text-slate-600 font-bold transition-all hover:text-primary hover:bg-primary/5 group"
+                        >
+                            <UserCircle className="h-5 w-5 text-slate-400 group-hover:text-primary transition-colors" />
                             <span className="hidden md:inline">Mi Perfil</span>
-                        </div>
+                        </Link>
                     </nav>
                 </div>
 

@@ -7,7 +7,8 @@ import {
     Users,
     LogOut,
     LayoutDashboard,
-    GraduationCap
+    GraduationCap,
+    UserCircle
 } from "lucide-react";
 
 export default function TeacherLayout({
@@ -41,12 +42,19 @@ export default function TeacherLayout({
                         </Link>
                     ))}
                 </nav>
-                <div className="mt-auto p-4 border-t border-slate-100">
+                <div className="mt-auto p-4 border-t border-slate-100 flex flex-col gap-2">
+                    <Link
+                        href="/dashboard/profile"
+                        className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-500 font-semibold transition-all hover:text-primary hover:bg-primary/5 group"
+                    >
+                        <UserCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                        <span className="hidden md:inline">Mi Perfil</span>
+                    </Link>
                     <form action={async () => {
                         "use server"
                         await signOut({ redirectTo: "/login" })
                     }}>
-                        <Button variant="ghost" className="w-full justify-start gap-3 px-4 py-6 rounded-xl text-slate-500 hover:text-destructive hover:bg-destructive/5 font-semibold transition-all">
+                        <Button variant="ghost" className="w-full justify-start gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-destructive hover:bg-destructive/5 font-semibold transition-all">
                             <LogOut className="h-5 w-5" />
                             <span className="hidden md:inline">Cerrar Sesión</span>
                         </Button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { authenticate } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GraduationCap, ArrowLeft } from 'lucide-react';
+import { GraduationCap, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -21,6 +21,7 @@ export default function LoginPage() {
         authenticate,
         undefined
     );
+    const [showPassword, setShowPassword] = useState(false);
 
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center px-4 bg-slate-50 overflow-hidden">
@@ -66,14 +67,27 @@ export default function LoginPage() {
                                 <div className="flex items-center ml-1">
                                     <Label htmlFor="password" text-slate-700 font-medium>Contraseña</Label>
                                 </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    autoComplete="new-password"
-                                    className="rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all duration-200"
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        required
+                                        autoComplete="new-password"
+                                        className="rounded-xl border-slate-200 focus:ring-primary focus:border-primary transition-all duration-200 pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                             <Button
                                 type="submit"

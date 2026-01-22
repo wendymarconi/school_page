@@ -1,5 +1,5 @@
 import { getParents, getClasses } from "@/app/dashboard/admin/actions";
-import CreateStudentForm from "@/components/admin/CreateStudentForm";
+import StudentForm from "@/components/admin/StudentForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -24,7 +24,7 @@ export default async function NewStudentPage() {
             </div>
 
             <div className="mt-8">
-                <CreateStudentForm parents={parents} classes={classes} />
+                <StudentForm parents={parents} classes={classes} />
             </div>
         </div>
     );

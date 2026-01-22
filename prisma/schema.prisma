@@ -27,6 +27,7 @@ model TeacherProfile {
   user    User   @relation(fields: [userId], references: [id])
   
   classes Class[]
+  active  Boolean @default(true)
 }
 
 model ParentProfile {
@@ -34,7 +35,7 @@ model ParentProfile {
   userId   String    @unique
   user     User      @relation(fields: [userId], references: [id])
   
-  students Student[]
+  students ParentStudent[]
 }
 
 model Student {
@@ -42,11 +43,20 @@ model Student {
   name      String
   birthDate DateTime
   
-  parentId  String
-  parent    ParentProfile @relation(fields: [parentId], references: [id])
+  parents   ParentStudent[]
   
   enrollments ClassEnrollment[]
   grades      Grade[]
+  active      Boolean @default(true)
+}
+
+model ParentStudent {
+  parentId  String
+  parent    ParentProfile @relation(fields: [parentId], references: [id])
+  studentId String
+  student   Student       @relation(fields: [studentId], references: [id])
+  
+  @@id([parentId, studentId])
 }
 
 model Class {
@@ -60,6 +70,7 @@ model Class {
 
   students  ClassEnrollment[]
   grades    Grade[]
+  active    Boolean @default(true)
 }
 
 model ClassEnrollment {

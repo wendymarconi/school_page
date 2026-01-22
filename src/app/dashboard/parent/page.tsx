@@ -25,8 +25,12 @@ export default async function ParentDashboard() {
         include: {
             students: {
                 include: {
-                    enrollments: {
-                        include: { class: true }
+                    student: {
+                        include: {
+                            enrollments: {
+                                include: { class: true }
+                            }
+                        }
                     }
                 }
             }
@@ -44,6 +48,9 @@ export default async function ParentDashboard() {
         )
     }
 
+    // Mapear para facilitar el uso en el componente
+    const children = parentProfile.students.map(ps => ps.student);
+
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -56,13 +63,13 @@ export default async function ParentDashboard() {
                     </p>
                 </div>
                 <div className="glass px-6 py-4 rounded-2xl border-primary/10">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hijos Registrados</p>
-                    <p className="text-2xl font-black text-primary">{parentProfile.students.length}</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hijos Vinculados</p>
+                    <p className="text-2xl font-black text-primary">{children.length}</p>
                 </div>
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {parentProfile.students.map((student: any) => (
+                {children.map((student: any) => (
                     <Link key={student.id} href={`/dashboard/parent/children/${student.id}`}>
                         <Card className="group glass border-none hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden rounded-[2rem]">
                             <CardHeader className="p-8 pb-4">
@@ -101,7 +108,7 @@ export default async function ParentDashboard() {
                         </Card>
                     </Link>
                 ))}
-                {parentProfile.students.length === 0 && (
+                {children.length === 0 && (
                     <div className="col-span-full text-center py-20 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-200">
                         <UserIcon className="h-12 w-12 text-slate-200 mx-auto mb-4" />
                         <h3 className="text-lg font-bold text-slate-900">Sin hijos vinculados</h3>

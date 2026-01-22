@@ -8,15 +8,16 @@ import { z } from "zod";
 const StudentSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     birthDate: z.string().transform((str) => new Date(str)),
-    parentId: z.string().min(1, "Debe seleccionar un acudiente"),
+    parentIds: z.array(z.string()).min(1, "Debe seleccionar al menos un acudiente"),
     classId: z.string().optional(),
 });
 
 export async function createStudent(formData: FormData) {
+    const parentIds = formData.getAll("parentIds") as string[];
     const validatedFields = StudentSchema.safeParse({
         name: formData.get("name"),
         birthDate: formData.get("birthDate"),
-        parentId: formData.get("parentId"),
+        parentIds: parentIds,
         classId: formData.get("classId"),
     });
 
@@ -27,14 +28,18 @@ export async function createStudent(formData: FormData) {
         };
     }
 
-    const { name, birthDate, parentId, classId } = validatedFields.data;
+    const { name, birthDate, parentIds: validatedParentIds, classId } = validatedFields.data;
 
     try {
-        const student = await prisma.student.create({
+        await prisma.student.create({
             data: {
                 name,
                 birthDate,
-                parentId,
+                parents: {
+                    create: validatedParentIds.map(parentId => ({
+                        parentId
+                    }))
+                },
                 ...(classId ? {
                     enrollments: {
                         create: {
@@ -47,8 +52,68 @@ export async function createStudent(formData: FormData) {
 
         revalidatePath("/dashboard/admin/students");
     } catch (error) {
+        console.error("Error creating student:", error);
         return {
             message: "Error de base de datos: No se pudo crear el alumno.",
+        };
+    }
+
+    redirect("/dashboard/admin/students");
+}
+
+export async function updateStudent(id: string, formData: FormData) {
+    const parentIds = formData.getAll("parentIds") as string[];
+    const rawBirthDate = formData.get("birthDate") as string;
+    const validatedFields = StudentSchema.safeParse({
+        name: formData.get("name"),
+        birthDate: rawBirthDate,
+        parentIds: parentIds,
+        classId: formData.get("classId"),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: "Faltan campos o son inválidos. No se pudo actualizar el alumno.",
+        };
+    }
+
+    const { name, birthDate, parentIds: validatedParentIds, classId } = validatedFields.data;
+
+    try {
+        await prisma.student.update({
+            where: { id },
+            data: {
+                name,
+                birthDate,
+                parents: {
+                    deleteMany: {},
+                    create: validatedParentIds.map(parentId => ({
+                        parentId
+                    }))
+                },
+            },
+        });
+
+        // Manejar inscripción a clase
+        if (classId) {
+            await prisma.classEnrollment.deleteMany({
+                where: { studentId: id }
+            });
+
+            await prisma.classEnrollment.create({
+                data: {
+                    studentId: id,
+                    classId: classId
+                }
+            });
+        }
+
+        revalidatePath("/dashboard/admin/students");
+    } catch (error) {
+        console.error("Error updating student:", error);
+        return {
+            message: "Error de base de datos: No se pudo actualizar el alumno.",
         };
     }
 

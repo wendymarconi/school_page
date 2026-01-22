@@ -24,6 +24,7 @@ export default async function TeacherDashboard() {
         where: { userId: session.user.id },
         include: {
             classes: {
+                where: { active: true },
                 include: {
                     _count: {
                         select: { students: true }

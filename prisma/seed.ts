@@ -8,11 +8,13 @@ async function main() {
 
     // 0. Crear Administrador
     const adminUser = await prisma.user.upsert({
-        where: { email: 'admin@school.com' },
-        update: {},
+        where: { email: 'admin@coem.edu.co' },
+        update: {
+            password: await bcrypt.hash('admin123', 10),
+        },
         create: {
-            email: 'admin@school.com',
-            password: hashedPassword,
+            email: 'admin@coem.edu.co',
+            password: await bcrypt.hash('admin123', 10),
             name: 'Administrador COEM',
             role: 'ADMIN',
         }
@@ -21,15 +23,15 @@ async function main() {
 
     // 1. Crear o Actualizar Profesor
     const teacherUser = await prisma.user.upsert({
-        where: { email: 'teacher@school.com' },
+        where: { email: 'profe.juan@coem.edu.co' },
         update: {
-            name: 'Prof. Rodriguez',
-            password: hashedPassword,
+            name: 'Prof. Juan Rodriguez',
+            password: await bcrypt.hash('123456', 10),
         },
         create: {
-            email: 'teacher@school.com',
-            password: hashedPassword,
-            name: 'Prof. Rodriguez',
+            email: 'profe.juan@coem.edu.co',
+            password: await bcrypt.hash('123456', 10),
+            name: 'Prof. Juan Rodriguez',
             role: 'TEACHER',
             teacherProfile: {
                 create: {
@@ -65,19 +67,20 @@ async function main() {
         const classId = teacherUser.teacherProfile.classes[0].id
         const studentNames = ['Alejandra', 'Bernardo', 'Camilo']
 
-        for (const name of studentNames) {
-            const parentEmail = `parent_${name.toLowerCase()}@test.com`
+        for (const [i, name] of studentNames.entries()) {
+            const parentEmail = i === 0 ? 'padre.pedro@email.com' : `parent_${name.toLowerCase()}@test.com`
+            const parentPass = await bcrypt.hash('123456', 10)
 
             const parentUser = await prisma.user.upsert({
                 where: { email: parentEmail },
                 update: {
-                    name: `Acudiente de ${name}`,
-                    password: hashedPassword
+                    name: i === 0 ? 'Padre Pedro' : `Acudiente de ${name}`,
+                    password: parentPass
                 },
                 create: {
                     email: parentEmail,
-                    password: hashedPassword,
-                    name: `Acudiente de ${name}`,
+                    password: parentPass,
+                    name: i === 0 ? 'Padre Pedro' : `Acudiente de ${name}`,
                     role: 'PARENT',
                     parentProfile: {
                         create: {}
@@ -88,7 +91,16 @@ async function main() {
 
             // Vincular estudiante
             let student = await prisma.student.findFirst({
-                where: { name, parent: { userId: parentUser.id } }
+                where: {
+                    name,
+                    parents: {
+                        some: {
+                            parent: {
+                                userId: parentUser.id
+                            }
+                        }
+                    }
+                }
             })
 
             if (!student) {
@@ -96,7 +108,11 @@ async function main() {
                     data: {
                         name,
                         birthDate: new Date('2012-05-15'),
-                        parentId: parentUser.parentProfile!.id,
+                        parents: {
+                            create: {
+                                parentId: parentUser.parentProfile!.id
+                            }
+                        },
                         enrollments: {
                             create: { classId }
                         }
