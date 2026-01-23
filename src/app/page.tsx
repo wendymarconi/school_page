@@ -44,14 +44,14 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link href="/login">
+            <Link href="/login?role=teacher">
               <Button variant="outline" className="hidden sm:flex rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold px-6 btn-premium">
-                Ingresar
+                Portal Docente
               </Button>
             </Link>
-            <Link href="/login">
+            <Link href="/login?role=parent">
               <Button className="rounded-full font-bold px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 btn-premium">
-                Plataforma
+                Portal Familiar
               </Button>
             </Link>
           </div>
@@ -276,7 +276,7 @@ export default function LandingPage() {
                 <Link href="#institucional" className="hover:text-primary transition-colors">Institucional</Link>
                 <Link href="#niveles" className="hover:text-primary transition-colors">Niveles Educativos</Link>
                 <Link href="#contacto" className="hover:text-primary transition-colors">Admisiones</Link>
-                <Link href="/login" className="hover:text-primary transition-colors font-bold text-white">Plataforma Virtual</Link>
+                <Link href="/login?role=admin" className="hover:text-primary transition-colors font-bold text-white">Gestión Administrativa</Link>
               </nav>
             </div>
 

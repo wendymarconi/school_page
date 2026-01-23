@@ -91,6 +91,8 @@ model Grade {
   value     Float
   subject   String? 
   description String?
+  type        String?  // EVALUACION, QUIZ, TRABAJO
+  period    Int      @default(1)
   date      DateTime @default(now())
   
   studentId String
