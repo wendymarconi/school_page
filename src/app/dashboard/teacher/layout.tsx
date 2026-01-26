@@ -1,4 +1,4 @@
-import { signOut } from "@/auth";
+import { logout } from "@/lib/actions";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -50,10 +50,7 @@ export default function TeacherLayout({
                         <UserCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
                         <span className="hidden md:inline">Mi Perfil</span>
                     </Link>
-                    <form action={async () => {
-                        "use server"
-                        await signOut({ redirectTo: "/login" })
-                    }}>
+                    <form action={logout}>
                         <Button variant="ghost" className="w-full justify-start gap-3 px-4 py-3 rounded-xl text-slate-500 hover:text-destructive hover:bg-destructive/5 font-semibold transition-all">
                             <LogOut className="h-5 w-5" />
                             <span className="hidden md:inline">Cerrar Sesión</span>

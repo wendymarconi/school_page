@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { User, Mail, Shield, Calendar, ChevronLeft } from "lucide-react";
+import { User, Mail, Shield, Calendar, ChevronLeft, Phone, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -107,6 +107,27 @@ export default async function ProfilePage() {
                             {user.role === "PARENT" && (
                                 <div className="space-y-4">
                                     <p className="text-slate-600 font-medium">Como acudiente, puedes supervisar las notas y reportes de tus hijos vinculados.</p>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Phone className="h-4 w-4 text-primary" />
+                                                <p className="text-sm font-bold text-primary">Teléfono</p>
+                                            </div>
+                                            <p className="text-slate-900 font-semibold">
+                                                {user.parentProfile?.phone || "No registrado"}
+                                            </p>
+                                        </div>
+                                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Users className="h-4 w-4 text-primary" />
+                                                <p className="text-sm font-bold text-primary">Parentesco</p>
+                                            </div>
+                                            <p className="text-slate-900 font-semibold">
+                                                {user.parentProfile?.relationship || "No especificado"}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                             {user.role === "ADMIN" && (

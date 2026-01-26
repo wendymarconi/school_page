@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen, GraduationCap, Calendar, TrendingUp, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function StudentDetailPage({ params }: { params: Promise<{ studentId: string }> }) {
     const session = await auth();
@@ -12,10 +13,16 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
 
     const { studentId } = await params;
 
-    const student = await prisma.student.findUnique({
+    const student = await prisma.student.findFirst({
         where: {
             id: studentId,
-            parent: { userId: session.user.id }
+            parents: {
+                some: {
+                    parent: {
+                        userId: session.user.id
+                    }
+                }
+            }
         },
         include: {
             enrollments: {
@@ -83,6 +90,17 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
                     const classData = enrollment.class;
                     const avg = calculateAverage(classData.grades);
 
+                    // Agrupar notas por periodo
+                    const gradesByPeriod = classData.grades.reduce((acc: any, grade: any) => {
+                        const period = grade.period || 1;
+                        if (!acc[period]) acc[period] = [];
+                        acc[period].push(grade);
+                        return acc;
+                    }, {});
+
+                    const periods = Object.keys(gradesByPeriod).sort();
+                    const defaultTab = periods.length > 0 ? `period-${periods[0]}` : undefined;
+
                     return (
                         <Card key={classData.id} className="group glass border-none overflow-hidden rounded-[2.5rem] hover:shadow-2xl transition-all duration-500">
                             <CardHeader className="p-8 pb-4">
@@ -111,31 +129,58 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
                                         <p className="text-2xl font-black text-slate-900">{avg}</p>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Detalle de Calificaciones</p>
-                                        <div className="space-y-2">
-                                            {classData.grades.map((grade: any) => (
-                                                <div key={grade.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 hover:border-primary/20 hover:shadow-md transition-all">
-                                                    <div>
-                                                        <p className="font-bold text-slate-800">{grade.description || "Actividad General"}</p>
-                                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
-                                                            {new Date(grade.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long' })}
-                                                        </p>
-                                                    </div>
-                                                    <div className={`px-4 py-2 rounded-xl text-lg font-black ${grade.value >= 7 ? 'bg-emerald-50 text-emerald-600' :
-                                                        grade.value >= 6 ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
-                                                        }`}>
-                                                        {grade.value.toFixed(1)}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            {classData.grades.length === 0 && (
-                                                <div className="p-8 text-center bg-slate-50/30 rounded-2xl border-2 border-dashed border-slate-100">
-                                                    <p className="text-sm font-medium text-slate-400 italic">No hay notas registradas aún</p>
-                                                </div>
-                                            )}
+                                    {periods.length > 0 ? (
+                                        <div className="space-y-3">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Detalle de Calificaciones</p>
+
+                                            <Tabs defaultValue={defaultTab} className="w-full">
+                                                <TabsList className="w-full justify-start overflow-x-auto rounded-xl h-auto p-1 bg-slate-100/50 mb-4 gap-2">
+                                                    {periods.map((period: string) => (
+                                                        <TabsTrigger
+                                                            key={period}
+                                                            value={`period-${period}`}
+                                                            className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold text-xs py-2 px-4"
+                                                        >
+                                                            Periodo {period}
+                                                        </TabsTrigger>
+                                                    ))}
+                                                </TabsList>
+
+                                                {periods.map((period: string) => (
+                                                    <TabsContent key={period} value={`period-${period}`} className="space-y-2 focus-visible:ring-0">
+                                                        {gradesByPeriod[period].map((grade: any) => (
+                                                            <div key={grade.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 hover:border-primary/20 hover:shadow-md transition-all">
+                                                                <div className="space-y-1">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${grade.type === 'Evaluación' ? 'bg-purple-100 text-purple-700' :
+                                                                                grade.type === 'Quiz' ? 'bg-blue-100 text-blue-700' :
+                                                                                    grade.type === 'Trabajo' ? 'bg-orange-100 text-orange-700' :
+                                                                                        'bg-slate-100 text-slate-700'
+                                                                            }`}>
+                                                                            {grade.type || 'General'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="font-bold text-slate-800">{grade.description || "Actividad General"}</p>
+                                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
+                                                                        {new Date(grade.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                                                    </p>
+                                                                </div>
+                                                                <div className={`px-4 py-2 rounded-xl text-lg font-black ${grade.value >= 7 ? 'bg-emerald-50 text-emerald-600' :
+                                                                    grade.value >= 6 ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+                                                                    }`}>
+                                                                    {grade.value.toFixed(1)}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </TabsContent>
+                                                ))}
+                                            </Tabs>
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <div className="p-8 text-center bg-slate-50/30 rounded-2xl border-2 border-dashed border-slate-100">
+                                            <p className="text-sm font-medium text-slate-400 italic">No hay notas registradas aún</p>
+                                        </div>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>

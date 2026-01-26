@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 
 export async function authenticate(
@@ -23,4 +23,8 @@ export async function authenticate(
         // IMPORTANTE: Los errores de redirección deben lanzarse para que Next.js los maneje
         throw error;
     }
+}
+
+export async function logout() {
+    await signOut({ redirectTo: "/login" });
 }

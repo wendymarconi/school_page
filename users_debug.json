@@ -1,0 +1,119 @@
+[
+  {
+    "id": "cmkfoz26l0000ws4t4kh7o3i8",
+    "email": "teacher@school.com",
+    "password": "$2b$10$Bn.PpS2ruv7BIJkPtN6Z.e6KWCYBl0q4hloV8hsEjgpjQ9hAdyvta",
+    "name": "Prof. Rodriguez",
+    "role": "TEACHER",
+    "createdAt": "2026-01-15T16:56:36.045Z",
+    "updatedAt": "2026-01-19T18:53:26.445Z"
+  },
+  {
+    "id": "cmkfoz2770005ws4tvvjz8rd8",
+    "email": "parent_alice@test.com",
+    "password": "$2b$10$Mr7GEy52oWuMceHr32PACeGSQar0xINMaMoU.BgqVK2B.tw5vCnRK",
+    "name": "Parent of Alice",
+    "role": "PARENT",
+    "createdAt": "2026-01-15T16:56:36.068Z",
+    "updatedAt": "2026-01-15T19:19:11.517Z"
+  },
+  {
+    "id": "cmkfoz27h000aws4to8oufboa",
+    "email": "parent_bob@test.com",
+    "password": "$2b$10$Mr7GEy52oWuMceHr32PACeGSQar0xINMaMoU.BgqVK2B.tw5vCnRK",
+    "name": "Parent of Bob",
+    "role": "PARENT",
+    "createdAt": "2026-01-15T16:56:36.078Z",
+    "updatedAt": "2026-01-15T19:19:11.526Z"
+  },
+  {
+    "id": "cmkfoz27q000fws4t1jwff9ef",
+    "email": "parent_charlie@test.com",
+    "password": "$2b$10$Mr7GEy52oWuMceHr32PACeGSQar0xINMaMoU.BgqVK2B.tw5vCnRK",
+    "name": "Parent of Charlie",
+    "role": "PARENT",
+    "createdAt": "2026-01-15T16:56:36.087Z",
+    "updatedAt": "2026-01-15T19:19:11.534Z"
+  },
+  {
+    "id": "cmklbw4kc0003x1r1tyauiilb",
+    "email": "parent_alejandra@test.com",
+    "password": "$2b$10$Bn.PpS2ruv7BIJkPtN6Z.e6KWCYBl0q4hloV8hsEjgpjQ9hAdyvta",
+    "name": "Acudiente de Alejandra",
+    "role": "PARENT",
+    "createdAt": "2026-01-19T15:37:01.212Z",
+    "updatedAt": "2026-01-23T13:31:04.939Z"
+  },
+  {
+    "id": "cmklbw4ld0009x1r1l0i9idqu",
+    "email": "parent_bernardo@test.com",
+    "password": "$2b$10$CP1/AdpgTF5syk.npQRWj.OIV7.x1WJIC3XK18shIr0cfdnjPXw1m",
+    "name": "Acudiente de Bernardo",
+    "role": "PARENT",
+    "createdAt": "2026-01-19T15:37:01.249Z",
+    "updatedAt": "2026-01-22T18:50:55.064Z"
+  },
+  {
+    "id": "cmklbw4m0000fx1r1qfn84nlo",
+    "email": "parent_camilo@test.com",
+    "password": "$2b$10$KLYNxKU/Gk5XuAYI4JujwufqA0TIhejL7s8r1MAe2hVH5QwjbqewS",
+    "name": "Acudiente de Camilo",
+    "role": "PARENT",
+    "createdAt": "2026-01-19T15:37:01.273Z",
+    "updatedAt": "2026-01-22T18:50:55.209Z"
+  },
+  {
+    "id": "cmkliwq3i0000niwvlf3puojy",
+    "email": "admin@school.com",
+    "password": "$2b$10$Bn.PpS2ruv7BIJkPtN6Z.e6KWCYBl0q4hloV8hsEjgpjQ9hAdyvta",
+    "name": "Administrador COEM",
+    "role": "ADMIN",
+    "createdAt": "2026-01-19T18:53:26.430Z",
+    "updatedAt": "2026-01-19T18:53:26.430Z"
+  },
+  {
+    "id": "cmkpqx4ki000033vd3bzvevas",
+    "email": "admin@coem.edu.co",
+    "password": "$2b$10$HDLkvqKUtqfQzwhHgeiA1.R6iu6YPY3qj172tQqv5DE1EYAOQ8VH2",
+    "name": "Administrador COEM",
+    "role": "ADMIN",
+    "createdAt": "2026-01-22T17:48:46.815Z",
+    "updatedAt": "2026-01-22T18:50:54.509Z"
+  },
+  {
+    "id": "cmkpqx4t5000133vd0z2ewnh2",
+    "email": "profe.juan@coem.edu.co",
+    "password": "$2b$10$AdbBZB3rxJ6DsRcSEmCxruStR9LWwE.yOemp1UXY/VOk0MnXAVnyK",
+    "name": "Prof. Juan Rodriguez",
+    "role": "TEACHER",
+    "createdAt": "2026-01-22T17:48:47.129Z",
+    "updatedAt": "2026-01-22T18:50:54.778Z"
+  },
+  {
+    "id": "cmkpqx4xh000433vd4kfqlen8",
+    "email": "padre.pedro@email.com",
+    "password": "$2b$10$N40NMheI4AAwvDE0EMtmu.g/L6oHYu0sPRF8tz3jIkOHNjsdIPhVm",
+    "name": "Padre Pedro",
+    "role": "PARENT",
+    "createdAt": "2026-01-22T17:48:47.285Z",
+    "updatedAt": "2026-01-22T18:50:54.915Z"
+  },
+  {
+    "id": "cmkpr09rt0002142y2tbfazvc",
+    "email": "wendymarconiquintero28@gmail.com",
+    "password": "$2b$10$UCmEbp8Uqs.oGdBwhFTn5eegYpEumqe2pwhIXfQLLD6qhTe9qiEI2",
+    "name": "Wendy Marconi ",
+    "role": "TEACHER",
+    "createdAt": "2026-01-22T17:51:13.530Z",
+    "updatedAt": "2026-01-22T17:51:13.530Z"
+  },
+  {
+    "id": "cmkpxc9g700002pqx5ddwc30y",
+    "email": "h@gmail.com",
+    "password": "$2b$10$ATCoFu99kjvDqCexVNlSW.0VS9MrpBHoRYGJwEYltGgfNNpx1L/J2",
+    "name": "Hernan Rondon",
+    "role": "PARENT",
+    "createdAt": "2026-01-22T20:48:30.676Z",
+    "updatedAt": "2026-01-22T20:48:30.676Z"
+  }
+]
