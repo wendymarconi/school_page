@@ -22,7 +22,11 @@ export async function GET(
             id: studentId,
         },
         include: {
-            parent: true,
+            parents: {
+                include: {
+                    parent: true
+                }
+            },
             enrollments: {
                 include: {
                     class: {
@@ -42,9 +46,12 @@ export async function GET(
         return new NextResponse("Student not found", { status: 404 });
     }
 
-    // Seguridad: Si es padre, debe ser su hijo. Si es profesor, omitimos por ahora la validación de clase para simplificar
-    if (session.user.role === "PARENT" && student.parent.userId !== session.user.id) {
-        return new NextResponse("Forbidden", { status: 403 });
+    // Seguridad: Si es padre, debe ser uno de los acudientes del alumno.
+    if (session.user.role === "PARENT") {
+        const isAssociatedParent = student.parents.some(p => p.parent.userId === session.user.id);
+        if (!isAssociatedParent) {
+            return new NextResponse("Forbidden", { status: 403 });
+        }
     }
 
     // Preparar datos para el PDF

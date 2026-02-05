@@ -83,7 +83,10 @@ async function main() {
                     name: i === 0 ? 'Padre Pedro' : `Acudiente de ${name}`,
                     role: 'PARENT',
                     parentProfile: {
-                        create: {}
+                        create: {
+                            phone: '300 123 4567',
+                            relationship: i === 0 ? 'Padre' : 'Acudiente'
+                        }
                     }
                 },
                 include: { parentProfile: true }

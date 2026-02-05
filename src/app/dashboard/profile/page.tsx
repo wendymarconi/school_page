@@ -140,7 +140,7 @@ export default async function ProfilePage() {
                 </div>
 
                 <div className="flex justify-center pt-8">
-                    <p className="text-slate-400 text-sm font-medium">Diseño por COEM Dev Team</p>
+                    <p className="text-slate-400 text-sm font-medium">Diseño por WMarconi</p>
                 </div>
             </div>
         </div>

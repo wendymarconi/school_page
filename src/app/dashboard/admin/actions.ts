@@ -7,7 +7,21 @@ import { z } from "zod";
 
 const StudentSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-    birthDate: z.string().transform((str) => new Date(str)),
+    birthDate: z.string()
+        .transform((str) => new Date(str))
+        .refine((date) => {
+            const today = new Date();
+            return date < today;
+        }, "La fecha de nacimiento no puede ser futura")
+        .refine((date) => {
+            const today = new Date();
+            const age = today.getFullYear() - date.getFullYear();
+            const monthDiff = today.getMonth() - date.getMonth();
+            const adjustedAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())
+                ? age - 1
+                : age;
+            return adjustedAge >= 3 && adjustedAge <= 25;
+        }, "El estudiante debe tener entre 3 y 25 años"),
     parentIds: z.array(z.string()).min(1, "Debe seleccionar al menos un acudiente"),
     classIds: z.array(z.string()).optional(),
 });

@@ -1,12 +1,24 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createParent, updateParent } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, UserPlus, Save } from "lucide-react";
+import { AlertCircle, UserPlus, Save, Check, X } from "lucide-react";
+import { DialogClose } from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ParentFormProps {
     initialData?: any;
@@ -14,8 +26,51 @@ interface ParentFormProps {
 }
 
 export default function ParentForm({ initialData, onSuccess }: ParentFormProps) {
+    const formRef = useRef<HTMLFormElement>(null);
     const [state, setState] = useState<{ errors?: any, message?: string } | null>(null);
     const [isPending, setIsPending] = useState(false);
+    const [phone, setPhone] = useState(initialData?.phone || "");
+    const [password, setPassword] = useState("");
+    const [passwordStrength, setPasswordStrength] = useState({ score: 0, message: "" });
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+
+    // Formatear número de teléfono mientras se escribe
+    const formatPhoneNumber = (value: string) => {
+        const cleaned = value.replace(/\D/g, "");
+        if (cleaned.length <= 3) return cleaned;
+        if (cleaned.length <= 6) return `${cleaned.slice(0, 3)} ${cleaned.slice(3)}`;
+        return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6, 10)}`;
+    };
+
+    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = formatPhoneNumber(e.target.value);
+        setPhone(formatted);
+    };
+
+    // Evaluar fortaleza de contraseña
+    const evaluatePassword = (pwd: string) => {
+        let score = 0;
+        let message = "";
+
+        if (pwd.length >= 8) score++;
+        if (/[A-Z]/.test(pwd)) score++;
+        if (/[0-9]/.test(pwd)) score++;
+        if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+        if (score === 0) message = "";
+        else if (score === 1) message = "Muy débil";
+        else if (score === 2) message = "Débil";
+        else if (score === 3) message = "Buena";
+        else message = "Excelente";
+
+        setPasswordStrength({ score, message });
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const pwd = e.target.value;
+        setPassword(pwd);
+        evaluatePassword(pwd);
+    };
 
     async function handleSubmit(formData: FormData) {
         setIsPending(true);
@@ -50,7 +105,7 @@ export default function ParentForm({ initialData, onSuccess }: ParentFormProps) 
                 </p>
             </CardHeader>
             <CardContent className="px-0 pb-0">
-                <form action={handleSubmit} className="space-y-4">
+                <form ref={formRef} action={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name" className="text-slate-700 font-semibold text-sm">Nombre Completo</Label>
                         <Input
@@ -94,9 +149,12 @@ export default function ParentForm({ initialData, onSuccess }: ParentFormProps) 
                                 name="phone"
                                 type="tel"
                                 placeholder="Ej: 310 123 4567"
-                                defaultValue={initialData?.phone}
+                                value={phone}
+                                onChange={handlePhoneChange}
+                                maxLength={12}
                                 className="h-11 border-slate-200"
                             />
+                            <p className="text-[10px] text-slate-500 italic">Formato: XXX XXX XXXX</p>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="relationship" className="text-slate-700 font-semibold text-sm">Parentesco</Label>
@@ -124,16 +182,45 @@ export default function ParentForm({ initialData, onSuccess }: ParentFormProps) 
                                 id="password"
                                 name="password"
                                 type="password"
-                                placeholder="Mínimo 6 caracteres"
+                                placeholder="Mínimo 8 caracteres"
+                                value={password}
+                                onChange={handlePasswordChange}
                                 required
                                 className="h-11 border-slate-200"
                             />
+                            {password && (
+                                <div className="flex items-center gap-2 mt-1">
+                                    <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full transition-all ${passwordStrength.score === 1 ? "w-1/4 bg-red-500" :
+                                                passwordStrength.score === 2 ? "w-2/4 bg-orange-500" :
+                                                    passwordStrength.score === 3 ? "w-3/4 bg-yellow-500" :
+                                                        passwordStrength.score === 4 ? "w-full bg-green-500" : "w-0"
+                                                }`}
+                                        />
+                                    </div>
+                                    <span className="text-[10px] font-medium text-slate-600">{passwordStrength.message}</span>
+                                </div>
+                            )}
                             {state?.errors?.password && (
                                 <p className="text-xs text-destructive flex items-center gap-1 mt-1">
                                     <AlertCircle className="h-3 w-3" /> {state.errors.password}
                                 </p>
                             )}
-                            <p className="text-[10px] text-slate-500 italic">Esta será la clave de acceso inicial del acudiente.</p>
+                            <div className="text-[10px] text-slate-500 space-y-0.5">
+                                <p className="flex items-center gap-1">
+                                    {password.length >= 8 ? <Check className="h-3 w-3 text-green-600" /> : <X className="h-3 w-3 text-slate-400" />}
+                                    Mínimo 8 caracteres
+                                </p>
+                                <p className="flex items-center gap-1">
+                                    {/[A-Z]/.test(password) ? <Check className="h-3 w-3 text-green-600" /> : <X className="h-3 w-3 text-slate-400" />}
+                                    Una letra mayúscula
+                                </p>
+                                <p className="flex items-center gap-1">
+                                    {/[0-9]/.test(password) ? <Check className="h-3 w-3 text-green-600" /> : <X className="h-3 w-3 text-slate-400" />}
+                                    Un número
+                                </p>
+                            </div>
                         </div>
                     )}
 
@@ -144,14 +231,65 @@ export default function ParentForm({ initialData, onSuccess }: ParentFormProps) 
                         </div>
                     )}
 
-                    <div className="pt-2">
-                        <Button
-                            type="submit"
-                            className="w-full h-11 font-bold shadow-md shadow-primary/10"
-                            disabled={isPending}
-                        >
-                            {isPending ? "Procesando..." : (initialData ? "Guardar Cambios" : "Crear Acudiente")}
-                        </Button>
+                    <div className="pt-2 flex gap-3">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button type="button" variant="outline" className="flex-1 h-11 font-bold border-slate-200 text-slate-500 hover:bg-slate-50">
+                                    Cancelar
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Está seguro que desea cancelar?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Si cancela ahora, perderá todos los datos ingresados.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Volver al formulario</AlertDialogCancel>
+                                    <DialogClose asChild>
+                                        <AlertDialogAction className="bg-destructive hover:bg-destructive/90">
+                                            Sí, cancelar operación
+                                        </AlertDialogAction>
+                                    </DialogClose>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    className="flex-[2] h-11 font-bold shadow-md shadow-primary/10"
+                                    disabled={isPending}
+                                >
+                                    {isPending ? "Procesando..." : (initialData ? "Guardar Cambios" : "Crear Acudiente")}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Desea {initialData ? "guardar los cambios" : "registrar este acudiente"}?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Verifique que la información sea correcta antes de confirmar la operación.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Revisar datos</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setConfirmDialogOpen(false);
+                                            if (formRef.current) {
+                                                formRef.current.requestSubmit();
+                                            }
+                                        }}
+                                        className="bg-primary hover:bg-primary/90"
+                                    >
+                                        Sí, {initialData ? "guardar cambios" : "registrar"}
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </form>
             </CardContent>

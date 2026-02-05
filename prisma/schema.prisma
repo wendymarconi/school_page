@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -37,6 +37,7 @@ model ParentProfile {
   
   phone        String?
   relationship String?
+  active       Boolean        @default(true)
   
   students     ParentStudent[]
 }

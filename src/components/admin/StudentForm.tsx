@@ -7,6 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, GraduationCap, Search, User } from "lucide-react";
+import Link from "next/link";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface StudentFormProps {
     parents: any[];
@@ -15,21 +27,59 @@ interface StudentFormProps {
 }
 
 export default function StudentForm({ parents, classes, initialData }: StudentFormProps) {
-    const [state, setState] = useState<{ errors?: any, message?: string } | null>(null);
-    const [isPending, setIsPending] = useState(false);
-    const [parentSearch, setParentSearch] = useState("");
-    const [classSearch, setClassSearch] = useState("");
-
     // Formatear fecha para el input date (YYYY-MM-DD)
     const defaultBirthDate = initialData?.birthDate
         ? new Date(initialData.birthDate).toISOString().split('T')[0]
         : "";
+
+    const [state, setState] = useState<{ errors?: any, message?: string } | null>(null);
+    const [isPending, setIsPending] = useState(false);
+    const [parentSearch, setParentSearch] = useState("");
+    const [classSearch, setClassSearch] = useState("");
+    const [birthDate, setBirthDate] = useState(defaultBirthDate);
+    const [ageError, setAgeError] = useState("");
 
     // Obtener acudientes actuales para el valor por defecto
     const currentParentIds = initialData?.parents?.map((p: any) => p.parentId) || [];
 
     // Obtener clases actuales para el valor por defecto
     const currentClassIds = initialData?.enrollments?.map((e: any) => e.classId) || [];
+
+    // Validar edad del estudiante
+    const validateAge = (dateString: string) => {
+        if (!dateString) {
+            setAgeError("");
+            return;
+        }
+
+        const birthDate = new Date(dateString);
+        const today = new Date();
+
+        if (birthDate >= today) {
+            setAgeError("La fecha de nacimiento no puede ser futura");
+            return;
+        }
+
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const adjustedAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+            ? age - 1
+            : age;
+
+        if (adjustedAge < 3) {
+            setAgeError("El estudiante debe tener al menos 3 años");
+        } else if (adjustedAge > 25) {
+            setAgeError("El estudiante no puede tener más de 25 años");
+        } else {
+            setAgeError("");
+        }
+    };
+
+    const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setBirthDate(value);
+        validateAge(value);
+    };
 
     async function handleSubmit(formData: FormData) {
         setIsPending(true);
@@ -86,15 +136,23 @@ export default function StudentForm({ parents, classes, initialData }: StudentFo
                             id="birthDate"
                             name="birthDate"
                             type="date"
-                            defaultValue={defaultBirthDate}
+                            value={birthDate}
+                            onChange={handleBirthDateChange}
+                            max={new Date().toISOString().split('T')[0]}
                             required
-                            className="h-12 border-slate-200"
+                            className={`h-12 border-slate-200 ${ageError ? 'border-destructive' : ''}`}
                         />
+                        {ageError && (
+                            <p className="text-sm text-destructive flex items-center gap-1 mt-1">
+                                <AlertCircle className="h-4 w-4" /> {ageError}
+                            </p>
+                        )}
                         {state?.errors?.birthDate && (
                             <p className="text-sm text-destructive flex items-center gap-1 mt-1">
                                 <AlertCircle className="h-4 w-4" /> {state.errors.birthDate}
                             </p>
                         )}
+                        <p className="text-[11px] text-slate-500 italic">El estudiante debe tener entre 3 y 25 años</p>
                     </div>
 
                     <div className="space-y-4">
@@ -225,14 +283,68 @@ export default function StudentForm({ parents, classes, initialData }: StudentFo
                         </div>
                     )}
 
-                    <div className="pt-4">
-                        <Button
-                            type="submit"
-                            className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
-                            disabled={isPending}
-                        >
-                            {isPending ? "Procesando..." : (initialData ? "Guardar Cambios" : "Registrar Alumno")}
-                        </Button>
+                    <div className="pt-4 flex gap-4">
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full h-12 text-lg font-bold border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all"
+                                    disabled={isPending}
+                                >
+                                    Cancelar
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Está seguro que desea cancelar?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Si cancela ahora, perderá todos los datos ingresados y no se guardarán los cambios.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Volver al formulario</AlertDialogCancel>
+                                    <Link href="/dashboard/admin/students" className="w-full sm:w-auto">
+                                        <AlertDialogAction className="bg-destructive hover:bg-destructive/90 w-full">
+                                            Sí, cancelar operación
+                                        </AlertDialogAction>
+                                    </Link>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+                                    disabled={isPending}
+                                >
+                                    {isPending ? "Procesando..." : (initialData ? "Guardar Cambios" : "Registrar Alumno")}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Desea {initialData ? "guardar los cambios" : "registrar este alumno"}?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Verifique que la información sea correcta antes de confirmar la operación.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Revisar datos</AlertDialogCancel>
+                                    <button
+                                        type="submit"
+                                        onClick={(e) => {
+                                            const form = document.querySelector('form') as HTMLFormElement;
+                                            if (form) form.requestSubmit();
+                                        }}
+                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                    >
+                                        Sí, {initialData ? "guardar cambios" : "registrar"}
+                                    </button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </form>
             </CardContent>

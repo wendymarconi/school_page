@@ -27,6 +27,10 @@ export default async function AdminDashboardPage() {
                 </div>
             </div>
 
+            <div className="flex items-center gap-2 mb-4 mt-8">
+                <div className="h-8 w-1 bg-primary rounded-full"></div>
+                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest">Estadísticas Generales</h2>
+            </div>
             <div className="grid gap-6 md:grid-cols-3">
                 {[
                     { label: "Alumnos", count: studentCount, icon: GraduationCap, color: "text-blue-600", bg: "bg-blue-50" },
@@ -47,6 +51,10 @@ export default async function AdminDashboardPage() {
                 ))}
             </div>
 
+            <div className="flex items-center gap-2 mb-4 mt-12">
+                <div className="h-8 w-1 bg-purple-600 rounded-full"></div>
+                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-widest">Gestión de Registros</h2>
+            </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 <ManagementCard
                     title="Alumnos"

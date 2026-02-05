@@ -89,13 +89,12 @@ export default function LandingPage() {
                 En el <strong className="text-white font-bold">Colegio EM</strong> formamos líderes con valores sólidos, excelencia académica e innovación constante.
               </p>
               <div className="flex flex-col sm:flex-row gap-5 pt-4">
-                <Button size="lg" className="rounded-full px-10 h-16 text-lg font-bold btn-premium shadow-2xl shadow-primary/30">
-                  Iniciar Admisión
-                  <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="lg" className="rounded-full px-10 h-16 text-lg font-bold border-white/20 text-slate-900 hover:bg-white/10 glass transition-all">
-                  Explorar Niveles
-                </Button>
+
+                <Link href="#niveles">
+                  <Button variant="outline" size="lg" className="rounded-full px-10 h-16 text-lg font-bold border-white/20 text-slate-900 hover:bg-white/10 glass transition-all">
+                    Explorar Niveles
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -247,9 +246,7 @@ export default function LandingPage() {
                   </svg>
                   Síguenos en Facebook
                 </a>
-                <Button variant="secondary" className="w-full py-4 px-8 h-auto rounded-2xl font-bold text-lg bg-red-500 hover:bg-red-600 text-white border-none transition-colors shadow-lg">
-                  Agendar Cita
-                </Button>
+
               </div>
             </div>
           </div>
@@ -291,7 +288,7 @@ export default function LandingPage() {
           </div>
 
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-xs text-center md:text-left">
-            <p>© 2026 Colegio Pedagógico Emmanuel. Floridablanca, Santander. Todos los derechos reservados.</p>
+            <p>© 2026 Colegio Pedagógico Emmanuel. Floridablanca, Santander. Todos los derechos reservados. - Desarrollado por WMarconi</p>
             <div className="flex gap-6">
               <span>Resolución SE 1234 de 2010</span>
               <span>DANE: 1234567890</span>

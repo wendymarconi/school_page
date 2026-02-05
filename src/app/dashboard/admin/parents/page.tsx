@@ -11,7 +11,9 @@ import {
     ShieldCheck,
     GraduationCap,
     Phone,
-    UserCircle2
+    UserCircle2,
+    Power,
+    PowerOff
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +28,8 @@ import {
 import ParentForm from "./ParentForm";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { toggleParentStatus } from "./actions";
+import { ToggleStatusButton } from "./ToggleStatusButton";
 
 export default async function ParentsPage({
     searchParams,
@@ -115,23 +119,31 @@ export default async function ParentsPage({
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-slate-900 group-hover:text-primary transition-colors">{parent.user.name}</h3>
-                                                <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                                                <div className="flex items-center gap-1 text-[10px] font-medium">
                                                     <UserCircle2 className="h-3 w-3" />
-                                                    {parent.relationship?.toUpperCase() || "ACUDIENTE"} ACTIVO
+                                                    <span className={parent.active ? "text-green-600" : "text-slate-400"}>
+                                                        {parent.relationship?.toUpperCase() || "ACUDIENTE"} {parent.active ? "ACTIVO" : "INACTIVO"}
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/5">
-                                                    <Pencil className="h-4 w-4" />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent className="sm:max-w-[425px]">
-                                                <ParentForm initialData={parent} />
-                                            </DialogContent>
-                                        </Dialog>
+                                        <div className="flex items-center gap-1">
+                                            <ToggleStatusButton
+                                                profileId={parent.id}
+                                                currentStatus={parent.active}
+                                            />
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/5">
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[425px]">
+                                                    <ParentForm initialData={parent} />
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
                                     </div>
                                     <div className="p-5 space-y-4">
                                         <div className="flex flex-col gap-2">

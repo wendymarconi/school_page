@@ -8,7 +8,12 @@ import bcrypt from "bcryptjs";
 const TeacherSchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     email: z.string().email("Email inválido"),
-    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres").optional().or(z.literal("")),
+    password: z.string()
+        .min(8, "La contraseña debe tener al menos 8 caracteres")
+        .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula")
+        .regex(/[0-9]/, "Debe contener al menos un número")
+        .optional()
+        .or(z.literal("")),
 });
 
 export async function createTeacher(formData: FormData) {

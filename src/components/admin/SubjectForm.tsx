@@ -8,6 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, User, MapPin, Clock, Loader2, Pencil } from "lucide-react";
 import { createSubject, updateSubject } from "@/app/dashboard/admin/subjects/actions";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Teacher {
     id: string;
@@ -139,27 +150,74 @@ export function SubjectForm({
                     </div>
 
                     <div className="pt-4 flex gap-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => router.back()}
-                            className="flex-1 h-12 text-lg font-bold"
-                        >
-                            Cancelar
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-[2] h-12 text-lg font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
-                        >
-                            {loading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Guardando...
-                                </>
-                            ) : (
-                                initialData ? "Guardar Cambios" : "Registrar Materia"
-                            )}
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="flex-1 h-12 text-lg font-bold"
+                                >
+                                    Cancelar
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Está seguro que desea cancelar?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Si cancela ahora, perderá todos los datos ingresados y no se guardarán los cambios.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Volver al formulario</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={() => router.back()}
+                                        className="bg-destructive hover:bg-destructive/90"
+                                    >
+                                        Sí, cancelar operación
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    type="button"
+                                    disabled={loading}
+                                    className="flex-[2] h-12 text-lg font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Guardando...
+                                        </>
+                                    ) : (
+                                        initialData ? "Guardar Cambios" : "Registrar Materia"
+                                    )}
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>¿Desea {initialData ? "guardar los cambios" : "registrar esta materia"}?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Verifique que la información sea correcta antes de confirmar la operación.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Revisar datos</AlertDialogCancel>
+                                    <button
+                                        type="submit"
+                                        onClick={(e) => {
+                                            // Since SubjectForm uses onSubmit on the form, requestSubmit() will trigger it.
+                                            const form = document.querySelector('form') as HTMLFormElement;
+                                            if (form) form.requestSubmit();
+                                        }}
+                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                    >
+                                        Sí, {initialData ? "guardar cambios" : "registrar"}
+                                    </button>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </form>
             </CardContent>

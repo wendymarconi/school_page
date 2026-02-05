@@ -86,6 +86,11 @@ export default async function ParentDashboard() {
                                 </CardTitle>
                                 <CardDescription className="text-slate-500 font-medium pt-1">
                                     Hijo/a vinculado
+                                    {student.enrollments[0]?.class?.location && (
+                                        <span className="block text-xs font-bold text-primary mt-1">
+                                            {student.enrollments[0].class.location}
+                                        </span>
+                                    )}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="p-8 pt-0">

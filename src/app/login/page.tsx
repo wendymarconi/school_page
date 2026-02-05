@@ -106,16 +106,19 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <div className="relative min-h-screen w-full flex items-center justify-center px-4 bg-slate-50 overflow-hidden">
+        <div className="relative min-h-screen w-full flex items-center justify-center px-4 bg-gradient-to-br from-sky-50 via-white to-cyan-50 overflow-hidden">
             {/* Background elements */}
-            <div className="absolute top-0 left-0 w-full h-full bg-grid-slate-100 opacity-50"></div>
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-200/40 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 animate-pulse-slow"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-200/40 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 animate-pulse-slow"></div>
 
             <div className="relative z-10 w-full max-w-sm">
-                <Link href="/" className="inline-flex items-center text-sm text-slate-500 hover:text-primary mb-6 transition-colors">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver al inicio
+                <Link href="/">
+                    <Button variant="outline" className="mb-8 rounded-full bg-white/80 border-white hover:bg-white hover:text-primary text-slate-600 transition-all shadow-sm backdrop-blur-sm gap-2 pl-3 pr-5 h-10">
+                        <div className="bg-primary/10 p-1 rounded-full">
+                            <ArrowLeft className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <span className="font-bold text-sm">Volver al inicio</span>
+                    </Button>
                 </Link>
 
                 <div className="flex justify-center mb-8">
@@ -127,6 +130,12 @@ export default function LoginPage() {
                 <Suspense fallback={<div className="text-center">Cargando...</div>}>
                     <LoginForm />
                 </Suspense>
+
+                <div className="mt-8 text-center space-y-2 text-xs text-slate-500 font-medium">
+                    <p>Carrera 9 E #27-58, La Cumbre - Floridablanca</p>
+                    <p>Tel: 6583490 - 3107823186</p>
+                    <p>colcoem11@hotmail.com</p>
+                </div>
             </div>
         </div>
     );
