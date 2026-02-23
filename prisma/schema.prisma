@@ -87,6 +87,17 @@ model ClassEnrollment {
   @@unique([studentId, classId])
 }
 
+model AcademicPeriod {
+  id        String   @id @default(cuid())
+  number    Int      @unique // 1, 2, 3, 4
+  name      String   // e.g., "Primer Periodo"
+  startDate DateTime
+  endDate   DateTime
+  active    Boolean  @default(false) // Whether grades can be submitted for this period
+  
+  grades    Grade[]
+}
+
 model Grade {
   id        String   @id @default(cuid())
   value     Float
@@ -95,6 +106,9 @@ model Grade {
   type        String?  // EVALUACION, QUIZ, TRABAJO
   period    Int      @default(1)
   date      DateTime @default(now())
+  
+  academicPeriodId String?
+  academicPeriod   AcademicPeriod? @relation(fields: [academicPeriodId], references: [id])
   
   studentId String
   student   Student @relation(fields: [studentId], references: [id])

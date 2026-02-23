@@ -34,6 +34,10 @@ export default async function ClassDetailsPage({ params }: { params: Promise<{ c
         }
     });
 
+    const activePeriod = await prisma.academicPeriod.findFirst({
+        where: { active: true }
+    });
+
     if (!classData) notFound();
 
     // Serialize dates for Client Component
@@ -69,7 +73,12 @@ export default async function ClassDetailsPage({ params }: { params: Promise<{ c
                     <p className="text-sm text-muted-foreground">Ver y añadir notas para los estudiantes de esta clase.</p>
                 </div>
                 <div className="overflow-x-auto">
-                    <GradeTable students={students} classId={classId} />
+                    <GradeTable
+                        students={students}
+                        classId={classId}
+                        defaultPeriod={activePeriod?.number || 1}
+                        isLocked={!activePeriod}
+                    />
                 </div>
             </div>
         </div>

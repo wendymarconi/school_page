@@ -30,6 +30,15 @@ export async function updateGrade(
         throw new Error("Unauthorized class access");
     }
 
+    // Get the currently active academic period if it's a new grade or if we want to validate
+    const activePeriod = await prisma.academicPeriod.findFirst({
+        where: { active: true }
+    });
+
+    if (!gradeId && !activePeriod) {
+        throw new Error("No hay un periodo académico activo para registrar notas.");
+    }
+
     if (gradeId) {
         // Update existing grade
         await prisma.grade.update({
@@ -39,7 +48,7 @@ export async function updateGrade(
                 description,
                 period,
                 type,
-                date: new Date() // Update date to show last modification? Or keep original? Usually keep original but let's update for now.
+                date: new Date()
             }
         });
     } else {
@@ -48,10 +57,11 @@ export async function updateGrade(
             data: {
                 value,
                 description,
-                period,
+                period: activePeriod?.number || period,
                 type,
                 studentId,
                 classId,
+                academicPeriodId: activePeriod?.id,
                 date: new Date()
             }
         });

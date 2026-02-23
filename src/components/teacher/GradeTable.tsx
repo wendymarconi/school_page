@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { updateGrade, deleteGrade } from '@/app/dashboard/teacher/actions';
-import { BookOpen, Plus, Calendar, Star, ChevronRight, GraduationCap, ClipboardList, Zap, FileText, Edit2, Trash2, X, Check } from 'lucide-react';
+import { BookOpen, Plus, Calendar, Star, ChevronRight, GraduationCap, ClipboardList, Zap, FileText, Edit2, Trash2, X, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -32,9 +32,19 @@ const GRADE_TYPES = [
     { id: 'TRABAJO', label: 'Trabajo', icon: FileText, color: 'text-emerald-500', bg: 'bg-emerald-50' },
 ];
 
-export default function GradeTable({ students, classId }: { students: Enrollment[], classId: string }) {
+export default function GradeTable({
+    students,
+    classId,
+    defaultPeriod = 1,
+    isLocked = false
+}: {
+    students: Enrollment[],
+    classId: string,
+    defaultPeriod?: number,
+    isLocked?: boolean
+}) {
     const [loading, setLoading] = useState(false);
-    const [activePeriod, setActivePeriod] = useState(1);
+    const [activePeriod, setActivePeriod] = useState(defaultPeriod);
     const [selectedType, setSelectedType] = useState('EVALUACION');
     const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
     const [editValue, setEditValue] = useState("");
@@ -96,42 +106,58 @@ export default function GradeTable({ students, classId }: { students: Enrollment
         setEditDesc(grade.description || "");
     };
 
-    const periods = [1, 2, 3, 4];
+    const periodRange = [1, 2, 3, 4];
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
                 {/* Period Selector */}
                 <div className="flex p-1.5 bg-slate-100/50 backdrop-blur-sm rounded-2xl w-full max-w-md border border-slate-200/50 shadow-inner">
-                    {periods.map((p) => (
+                    {periodRange.map((p) => (
                         <button
                             key={p}
                             onClick={() => setActivePeriod(p)}
-                            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activePeriod === p
+                            className={`relative flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activePeriod === p
                                 ? "bg-white text-primary shadow-sm scale-105"
                                 : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                                 }`}
                         >
                             Periodo {p}
+                            {p === defaultPeriod && (
+                                <span className={`absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-white ${isLocked ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'
+                                    }`} title={isLocked ? "Periodo Cerrado" : "Periodo Activo"} />
+                            )}
                         </button>
                     ))}
                 </div>
 
-                {/* Global Category Selector */}
-                <div className="flex gap-2 bg-white/50 p-1 rounded-2xl border border-slate-100 shadow-sm">
-                    {GRADE_TYPES.map((type) => (
-                        <button
-                            key={type.id}
-                            onClick={() => setSelectedType(type.id)}
-                            className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all flex items-center gap-2 ${selectedType === type.id
-                                ? "bg-slate-900 text-white shadow-lg"
-                                : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-                                }`}
-                        >
-                            <type.icon className="h-3 w-3" />
-                            {type.label}
-                        </button>
-                    ))}
+                {/* Status or Category Panel */}
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                    {isLocked && (
+                        <div className="px-6 py-3 rounded-2xl bg-amber-50 border border-amber-100 flex items-center gap-3 animate-pulse">
+                            <Calendar className="h-5 w-5 text-amber-600" />
+                            <p className="text-xs font-bold text-amber-700">
+                                Sin periodos activos.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Global Category Selector */}
+                    <div className="flex gap-2 bg-white/50 p-1 rounded-2xl border border-slate-100 shadow-sm">
+                        {GRADE_TYPES.map((type) => (
+                            <button
+                                key={type.id}
+                                onClick={() => setSelectedType(type.id)}
+                                className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all flex items-center gap-2 ${selectedType === type.id
+                                    ? "bg-slate-900 text-white shadow-lg"
+                                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                                    }`}
+                            >
+                                <type.icon className="h-3 w-3" />
+                                {type.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -245,18 +271,22 @@ export default function GradeTable({ students, classId }: { students: Enrollment
                                                                         <div className="flex justify-between items-center mb-1">
                                                                             <span className="text-md font-black text-slate-900">{g.value}</span>
                                                                             <div className="flex gap-1 opacity-0 group-hover/note:opacity-100 transition-opacity">
-                                                                                <button
-                                                                                    onClick={() => startEditing(g)}
-                                                                                    className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-primary transition-colors"
-                                                                                >
-                                                                                    <Edit2 className="h-3 w-3" />
-                                                                                </button>
-                                                                                <button
-                                                                                    onClick={() => handleDeleteGrade(g.id)}
-                                                                                    className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-destructive transition-colors"
-                                                                                >
-                                                                                    <Trash2 className="h-3 w-3" />
-                                                                                </button>
+                                                                                {!isLocked && (
+                                                                                    <button
+                                                                                        onClick={() => startEditing(g)}
+                                                                                        className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-primary transition-colors"
+                                                                                    >
+                                                                                        <Edit2 className="h-3 w-3" />
+                                                                                    </button>
+                                                                                )}
+                                                                                {!isLocked && (
+                                                                                    <button
+                                                                                        onClick={() => handleDeleteGrade(g.id)}
+                                                                                        className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-destructive transition-colors"
+                                                                                    >
+                                                                                        <Trash2 className="h-3 w-3" />
+                                                                                    </button>
+                                                                                )}
                                                                             </div>
                                                                         </div>
                                                                         <p className="text-[10px] text-slate-400 font-medium line-clamp-2 leading-relaxed italic">
@@ -298,8 +328,9 @@ export default function GradeTable({ students, classId }: { students: Enrollment
                                                         step="0.1"
                                                         min="0"
                                                         max="100"
+                                                        disabled={isLocked}
                                                         placeholder="0 - 100"
-                                                        className="w-full h-14 rounded-[1.25rem] border-2 border-slate-100 bg-white px-5 text-xl font-black shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-slate-200"
+                                                        className="w-full h-14 rounded-[1.25rem] border-2 border-slate-100 bg-white px-5 text-xl font-black shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-slate-200 disabled:bg-slate-50 disabled:cursor-not-allowed"
                                                         required
                                                     />
                                                 </div>
@@ -307,18 +338,28 @@ export default function GradeTable({ students, classId }: { students: Enrollment
                                                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] ml-1 mb-2 block">Descripción</label>
                                                     <textarea
                                                         name="description"
+                                                        disabled={isLocked}
                                                         placeholder="Ej: Quiz de geometría..."
-                                                        className="w-full h-24 rounded-[1.25rem] border-2 border-slate-100 bg-white px-5 py-4 text-sm shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-slate-200 resize-none"
+                                                        className="w-full h-24 rounded-[1.25rem] border-2 border-slate-100 bg-white px-5 py-4 text-sm shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all placeholder:text-slate-200 resize-none disabled:bg-slate-50 disabled:cursor-not-allowed"
                                                     />
                                                 </div>
                                             </div>
                                             <Button
                                                 type="submit"
-                                                disabled={loading}
-                                                className="w-full rounded-[1.25rem] h-14 font-black text-md shadow-2xl shadow-primary/20 hover:shadow-primary/40 active:scale-95 transition-all duration-300 group/btn overflow-hidden"
+                                                disabled={loading || isLocked}
+                                                className={`w-full rounded-[1.25rem] h-14 font-black text-md shadow-2xl transition-all duration-300 group/btn overflow-hidden ${isLocked
+                                                        ? 'bg-slate-300 shadow-none cursor-not-allowed opacity-50'
+                                                        : 'shadow-primary/20 hover:shadow-primary/40 active:scale-95'
+                                                    }`}
                                             >
-                                                <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-                                                Ingresar Nota
+                                                {isLocked ? (
+                                                    "Periodo Inactivo"
+                                                ) : (
+                                                    <>
+                                                        <Plus className="h-5 w-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                                                        Ingresar Nota
+                                                    </>
+                                                )}
                                             </Button>
                                         </form>
                                     </div>

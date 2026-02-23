@@ -54,6 +54,11 @@ export async function GET(
         }
     }
 
+    // Obtener periodo y año de la query string (opcional, por defecto 1 y 2024)
+    const { searchParams } = new URL(request.url);
+    const period = parseInt(searchParams.get("period") || "1");
+    const year = searchParams.get("year") || "2024";
+
     // Preparar datos para el PDF
     const calculateAverage = (grades: any[]) => {
         if (grades.length === 0) return "0.0";
@@ -61,20 +66,28 @@ export async function GET(
         return (sum / grades.length).toFixed(1);
     };
 
-    const subjects = student.enrollments.map(e => ({
-        name: e.class.name,
-        average: calculateAverage(e.class.grades)
-    }));
+    const subjects = student.enrollments.map(e => {
+        // Filtrar notas por periodo si es necesario
+        const periodGrades = e.class.grades.filter(g => g.period === period);
+        return {
+            name: e.class.name,
+            average: calculateAverage(periodGrades)
+        };
+    });
 
-    const allGrades = student.enrollments.flatMap(e => e.class.grades);
-    const overallAverage = calculateAverage(allGrades);
+    const allPeriodGrades = student.enrollments.flatMap(e =>
+        e.class.grades.filter(g => g.period === period)
+    );
+    const overallAverage = calculateAverage(allPeriodGrades);
 
     // Generar el PDF
     const pdfElement = createElement(ReportCard, {
         studentName: student.name,
         studentId: student.id,
         overallAverage,
-        subjects
+        subjects,
+        period,
+        year
     });
 
     const stream = await renderToStream(pdfElement as any);
@@ -82,7 +95,7 @@ export async function GET(
     return new NextResponse(stream as any, {
         headers: {
             "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="Boletin_${student.name.replace(/\s+/g, '_')}.pdf"`,
+            "Content-Disposition": `attachment; filename="Boletin_P${period}_${student.name.replace(/\s+/g, '_')}.pdf"`,
         },
     });
 }
